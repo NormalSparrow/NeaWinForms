@@ -36,7 +36,7 @@ namespace NEA_Audio_GUI
             }
             else
             {
-                MessageBox.Show("Please click one of the wave buttons to generate a sound");
+                MessageBox.Show("Please click one of the wave buttons to generate a sound...");
             }
         }
 
