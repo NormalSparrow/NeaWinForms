@@ -13,7 +13,8 @@ namespace NEA_Audio_GUI
             List<short> data = new List<short>();
             int samples = (int)(sampleRate * seconds);
 
-            Random rand = new Random();
+            // Use a fixed seed for consistent results
+            Random rand = new Random(42); // You can use any integer value as the seed
             Queue<double> buf = new Queue<double>();
 
             for (int n = 0; n < sampleRate / (frequency / 1000); n++) //making the buffer size
@@ -31,6 +32,7 @@ namespace NEA_Audio_GUI
             }
 
             MemoryStream ms = new MemoryStream(data.SelectMany(BitConverter.GetBytes).ToArray());
+            ms.Position = 0;
             return new RawSourceWaveStream(ms, new WaveFormat(sampleRate, 16, 1));
         }
     }

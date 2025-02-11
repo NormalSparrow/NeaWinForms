@@ -33,9 +33,9 @@
             sawtoothWaveButton = new Button();
             squareWaveButton = new Button();
             decayButton = new Button();
-            frequency = new TrackBar();
+            Frequency = new TrackBar();
             Volume = new TrackBar();
-            ((System.ComponentModel.ISupportInitialize)frequency).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)Frequency).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Volume).BeginInit();
             SuspendLayout();
             // 
@@ -94,11 +94,12 @@
             // 
             // frequency
             // 
-            frequency.Location = new Point(566, 468);
-            frequency.Margin = new Padding(2, 1, 2, 1);
-            frequency.Name = "frequency";
-            frequency.Size = new Size(146, 45);
-            frequency.TabIndex = 5;
+            Frequency.Location = new Point(566, 468);
+            Frequency.Margin = new Padding(2, 1, 2, 1);
+            Frequency.Name = "frequency";
+            Frequency.Size = new Size(146, 45);
+            Frequency.TabIndex = 5;
+            Frequency.Scroll += frequency_Scroll;
             // 
             // Volume
             // 
@@ -115,7 +116,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(819, 565);
             Controls.Add(Volume);
-            Controls.Add(frequency);
+            Controls.Add(Frequency);
             Controls.Add(decayButton);
             Controls.Add(squareWaveButton);
             Controls.Add(sawtoothWaveButton);
@@ -124,7 +125,7 @@
             Margin = new Padding(2, 1, 2, 1);
             Name = "Form1";
             Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)frequency).EndInit();
+            ((System.ComponentModel.ISupportInitialize)Frequency).EndInit();
             ((System.ComponentModel.ISupportInitialize)Volume).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -137,7 +138,7 @@
         private Button sawtoothWaveButton;
         private Button squareWaveButton;
         private Button decayButton;
-        private TrackBar frequency;
+        private TrackBar Frequency;
         private TrackBar Volume;
     }
 }
