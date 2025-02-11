@@ -28,7 +28,7 @@ namespace NEA_Audio_GUI
                 audioPlayer.StopAudio();
             }
 
-          
+
             if (audioStream != null)
             {
                 audioStream.Dispose();
@@ -69,6 +69,11 @@ namespace NEA_Audio_GUI
         private void frequency_Scroll(object sender, EventArgs e)
         {
             frequency = 1000 + (Frequency.Value * 100);
+        }
+
+        private void triangleWaveButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         private enum WaveType

@@ -59,6 +59,7 @@
             triangleWaveButton.TabIndex = 1;
             triangleWaveButton.Text = "▲";
             triangleWaveButton.UseVisualStyleBackColor = true;
+            triangleWaveButton.Click += triangleWaveButton_Click;
             // 
             // sawtoothWaveButton
             // 
@@ -92,11 +93,11 @@
             decayButton.UseVisualStyleBackColor = true;
             decayButton.Click += decayButton_Click;
             // 
-            // frequency
+            // Frequency
             // 
             Frequency.Location = new Point(566, 468);
             Frequency.Margin = new Padding(2, 1, 2, 1);
-            Frequency.Name = "frequency";
+            Frequency.Name = "Frequency";
             Frequency.Size = new Size(146, 45);
             Frequency.TabIndex = 5;
             Frequency.Scroll += frequency_Scroll;
