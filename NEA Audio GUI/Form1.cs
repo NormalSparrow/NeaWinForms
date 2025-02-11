@@ -46,7 +46,7 @@ namespace NEA_Audio_GUI
             }
             else
             {
-                MessageBox.Show("Please click one of the wave buttons to generate a sound...");
+                MessageBox.Show("please click something else to generate noise before play");
             }
         }
         private void decayButton_Click(object sender, EventArgs e)
