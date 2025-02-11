@@ -7,16 +7,19 @@ namespace NEA_Audio_GUI
     public partial class Form1 : Form
     {
         private karplus audioKarplus;
+        private trianglewave audioTriangle;
         private AudioPlayer audioPlayer;
         private RawSourceWaveStream? audioStream;
         private byte[] storedAudioData;
         private WaveType waveType;
         private double frequency = 55000d;
+
         public Form1()
         {
             InitializeComponent();
             audioKarplus = new karplus();
             audioPlayer = new AudioPlayer();
+            audioTriangle = new trianglewave();
             Volume.Maximum = 1000;
             Frequency.Maximum = 1000;
         }
@@ -39,7 +42,10 @@ namespace NEA_Audio_GUI
             {
                 audioStream = audioKarplus.Decay(frequency: frequency);
             }
-
+            if (waveType == WaveType.Triangle)
+            {
+                audioStream = audioTriangle.Triangle(frequency: frequency);
+            }
             if (audioStream != null)
             {
                 await audioPlayer.PlayAudio(audioStream);
@@ -73,14 +79,14 @@ namespace NEA_Audio_GUI
 
         private void triangleWaveButton_Click(object sender, EventArgs e)
         {
-
+            waveType = WaveType.Triangle;
         }
 
         private enum WaveType
         {
 
-            Karplus
-
+            Karplus,
+            Triangle
         }
 
 
