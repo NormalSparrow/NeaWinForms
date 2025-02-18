@@ -31,30 +31,40 @@ namespace NEA_Audio_GUI
                 audioPlayer.StopAudio();
             }
 
-
+            
             if (audioStream != null)
             {
                 audioStream.Dispose();
                 audioStream = null;
             }
 
-            if (waveType == WaveType.Karplus)
-            {
-                audioStream = audioKarplus.Decay(frequency: frequency);
+           
+            switch (waveType)
+            {   
+                case WaveType.Karplus:
+                    audioStream = audioKarplus.Decay(frequency: frequency);
+                    break;
+
+                case WaveType.Triangle:
+                    audioStream = audioTriangle.Triangle(frequency: frequency); 
+                    break;
+
+                default:
+                    MessageBox.Show("Please select a wave type to generate sound.");
+                    return;
             }
-            if (waveType == WaveType.Triangle)
-            {
-                audioStream = audioTriangle.Triangle(frequency: frequency);
-            }
+
+       
             if (audioStream != null)
             {
                 await audioPlayer.PlayAudio(audioStream);
             }
             else
             {
-                MessageBox.Show("please click something else to generate noise before play");
+                MessageBox.Show("No audio stream generated.");
             }
         }
+
         private void decayButton_Click(object sender, EventArgs e)
         {
 
