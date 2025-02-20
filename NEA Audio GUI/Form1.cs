@@ -18,11 +18,22 @@ namespace NEA_Audio_GUI
         private double frequency = 55000d;
         private Dictionary<WaveType, Button> waveTypeButtons;
         private double[] latestSamples = new double[500]; // Buffer for visualization
+        private System.Windows.Forms.Timer visualizerTimer;
+
+        private double[] XAxisValues(int count)
+        {
+            List<double> xValues = new List<double>(); 
+            for (int i = 0; i < count; i++)
+            {
+                xValues.Add(i); 
+            }
+            return xValues.ToArray(); 
+        }
         public Form1()
         {
             InitializeComponent();
-            InitializeComponent();
-       
+
+
             audioKarplus = new karplus();
             audioPlayer = new AudioPlayer();
             audioTriangle = new trianglewave();
@@ -141,9 +152,17 @@ namespace NEA_Audio_GUI
             }
 
             latestSamples = mixedSamples.Select(s => s / (double)short.MaxValue).Take(500).ToArray(); // to plot points on the scottplot
-            byte[] mixedBytes = mixedSamples.SelectMany(BitConverter.GetBytes).ToArray();// Convert the mixed samples back into a byte array
 
 
+            if (latestSamples.Length > 0)
+            {
+                Oscillator.Plot.Clear();
+                Oscillator.Plot.Add.Scatter(XAxisValues(latestSamples.Length), latestSamples);
+                Oscillator.Plot.Axes.AutoScale(); 
+                Oscillator.Refresh();
+            }
+
+            byte[] mixedBytes = mixedSamples.SelectMany(BitConverter.GetBytes).ToArray();// Convert the mixed samples back into a byte 
             MemoryStream mixedStream = new MemoryStream(mixedBytes);
             mixedStream.Position = 0;
 
