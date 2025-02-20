@@ -9,6 +9,7 @@ namespace NEA_Audio_GUI
     {
         private karplus audioKarplus;
         private trianglewave audioTriangle;
+        private squarewave audioSquare;
         private AudioPlayer audioPlayer;
         private RawSourceWaveStream? audioStream;
         private byte[] storedAudioData;
@@ -16,22 +17,30 @@ namespace NEA_Audio_GUI
         private List<WaveType> inUseWaveTypes = new List<WaveType>();
         private double frequency = 55000d;
         private Dictionary<WaveType, Button> waveTypeButtons;
-
+        private double[] latestSamples = new double[500]; // Buffer for visualization
         public Form1()
         {
             InitializeComponent();
+            InitializeComponent();
+       
             audioKarplus = new karplus();
             audioPlayer = new AudioPlayer();
             audioTriangle = new trianglewave();
+            audioSquare = new squarewave();
             Volume.Maximum = 1000;
             Frequency.Maximum = 1000;
 
             waveTypeButtons = new Dictionary<WaveType, Button>() {
-                
+
                 { WaveType.Karplus, decayButton },
                 { WaveType.Triangle, triangleWaveButton }, //dictionary to make it easier to add more waveTypes 
+                { WaveType.Square, squareWaveButton},
             };
 
+            Oscillator.Plot.Title("WaveForm visualizer");
+            Oscillator.Plot.XLabel("Time");
+            Oscillator.Plot.YLabel("Amplitude");
+            Oscillator.Refresh();
 
         }
 
@@ -42,7 +51,7 @@ namespace NEA_Audio_GUI
                 audioPlayer.StopAudio();
             }
 
-            
+
             if (audioStream != null)
             {
                 audioStream.Dispose();
@@ -62,6 +71,10 @@ namespace NEA_Audio_GUI
                     case WaveType.Triangle:
                         stream = audioTriangle.Triangle(frequency: frequency);
                         break;
+                    case WaveType.Square:
+                        stream = audioSquare.Square(frequency: frequency);
+                        break;
+
                 }
 
                 if (stream != null)
@@ -70,13 +83,13 @@ namespace NEA_Audio_GUI
                 }
             }
 
-      
+
             if (streams.Count > 0)
             {
                 audioStream = MixStreams(streams.ToArray());
             }
 
-           
+
             if (audioStream != null)
             {
                 await audioPlayer.PlayAudio(audioStream);
@@ -89,14 +102,14 @@ namespace NEA_Audio_GUI
 
         private RawSourceWaveStream MixStreams(RawSourceWaveStream[] streams)
         {
-            if(streams.Length == 0)
+            if (streams.Length == 0)
             {
                 throw new ArgumentException("something has gone incredibly wrong, mixstreams is being called with no streams");
             }
             var format = streams[0].WaveFormat;
             foreach (var stream in streams)
             {
-                if(stream.WaveFormat != format)
+                if (stream.WaveFormat != format)
                 {
                     Console.WriteLine("error occured: waveStreams are not formatted the same");
                 }
@@ -106,38 +119,38 @@ namespace NEA_Audio_GUI
             {
                 byte[] buffer = new byte[stream.Length];
                 stream.Read(buffer, 0, buffer.Length); //read samples to buffer
-                sampleBuffers.Add(buffer);   
-            }   
+                sampleBuffers.Add(buffer);
+            }
             List<short> mixedSamples = new List<short>();
             for (int i = 0; i < sampleBuffers[0].Length; i += 2) // Process 2 bytes at a time (16-bit samples)
             {
                 int mixedSample = 0;
 
-          
+
                 foreach (var buffer in sampleBuffers)      // add the samples from all streams
                 {
                     short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to a short 
-                    mixedSample += sample; 
+                    mixedSample += sample;
                 }
 
-                
-                mixedSample = Math.Max(short.MinValue, Math.Min(short.MaxValue, mixedSample));//overflow catcher
+                mixedSample = mixedSample / streams.Length;
+                mixedSample = Math.Max(short.MinValue, Math.Min(short.MaxValue, mixedSample));// makes sure sample is in range
 
-                
+
                 mixedSamples.Add((short)mixedSample);
             }
 
-            
+            latestSamples = mixedSamples.Select(s => s / (double)short.MaxValue).Take(500).ToArray(); // to plot points on the scottplot
             byte[] mixedBytes = mixedSamples.SelectMany(BitConverter.GetBytes).ToArray();// Convert the mixed samples back into a byte array
 
 
             MemoryStream mixedStream = new MemoryStream(mixedBytes);
-            mixedStream.Position = 0; 
+            mixedStream.Position = 0;
 
-           
+
             return new RawSourceWaveStream(mixedStream, format); //final array
-       
-    }
+
+        }
         private void decayButton_Click(object sender, EventArgs e)
         {
 
@@ -145,9 +158,13 @@ namespace NEA_Audio_GUI
         }
         private void triangleWaveButton_Click(object sender, EventArgs e)
         {
-          toggleButton(WaveType.Triangle);
+            toggleButton(WaveType.Triangle);
         }
-        private void toggleButton (WaveType waveType)
+        private void squareWaveButton_Click(object sender, EventArgs e)
+        {
+            toggleButton(WaveType.Square);
+        }
+        private void toggleButton(WaveType waveType)
         {
             if (inUseWaveTypes.Contains(waveType))
             {
@@ -178,7 +195,7 @@ namespace NEA_Audio_GUI
                 {
                     button.BackColor = Color.White;
                 }
-            
+
             }
         }
         private void Volume_Scroll(object sender, EventArgs e)
@@ -191,18 +208,23 @@ namespace NEA_Audio_GUI
             }
 
         }
-        
+
         private void frequency_Scroll(object sender, EventArgs e)
         {
             frequency = 1000 + (Frequency.Value * 100);
         }
 
-    
+        private void formsPlot1_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private enum WaveType
         {
 
             Karplus,
-            Triangle
+            Triangle,
+            Square
         }
 
 

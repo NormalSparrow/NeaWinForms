@@ -35,6 +35,7 @@
             decayButton = new Button();
             Frequency = new TrackBar();
             Volume = new TrackBar();
+            Oscillator = new ScottPlot.WinForms.FormsPlot();
             ((System.ComponentModel.ISupportInitialize)Frequency).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Volume).BeginInit();
             SuspendLayout();
@@ -81,6 +82,7 @@
             squareWaveButton.TabIndex = 3;
             squareWaveButton.Text = " ⬛";
             squareWaveButton.UseVisualStyleBackColor = true;
+            squareWaveButton.Click += squareWaveButton_Click;
             // 
             // decayButton
             // 
@@ -111,11 +113,22 @@
             Volume.TabIndex = 6;
             Volume.Scroll += Volume_Scroll;
             // 
+            // Oscillator
+            // 
+            Oscillator.BackColor = SystemColors.ControlLightLight;
+            Oscillator.DisplayScale = 1F;
+            Oscillator.Location = new Point(123, 12);
+            Oscillator.Name = "Oscillator";
+            Oscillator.Size = new Size(533, 317);
+            Oscillator.TabIndex = 7;
+            Oscillator.Load += formsPlot1_Load;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(819, 565);
+            Controls.Add(Oscillator);
             Controls.Add(Volume);
             Controls.Add(Frequency);
             Controls.Add(decayButton);
@@ -141,5 +154,6 @@
         private Button decayButton;
         private TrackBar Frequency;
         private TrackBar Volume;
+        private ScottPlot.WinForms.FormsPlot Oscillator;
     }
 }
