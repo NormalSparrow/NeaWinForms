@@ -19,7 +19,7 @@ namespace NEA_Audio_GUI
         private Dictionary<WaveType, Button> waveTypeButtons;
         private double[] latestSamples = new double[500]; // Buffer for visualization
         private System.Windows.Forms.Timer visualizerTimer;
-
+        public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private double[] XAxisValues(int count)
         {
             List<double> xValues = new List<double>(); 
@@ -125,22 +125,22 @@ namespace NEA_Audio_GUI
                     Console.WriteLine("error occured: waveStreams are not formatted the same");
                 }
             }
-            List<byte[]> sampleBuffers = new List<byte[]>(); //all bytes of samples are in a list 
+            List<byte[]> sampleBuffers = new List<byte[]>(); 
             foreach (var stream in streams)
             {
                 byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length); //read samples to buffer
+                stream.Read(buffer, 0, buffer.Length); //samples are read to buffer
                 sampleBuffers.Add(buffer);
             }
             List<short> mixedSamples = new List<short>();
-            for (int i = 0; i < sampleBuffers[0].Length; i += 2) // Process 2 bytes at a time (16-bit samples)
+            for (int i = 0; i < sampleBuffers[0].Length; i += 2) //two bit read
             {
                 int mixedSample = 0;
 
 
-                foreach (var buffer in sampleBuffers)      // add the samples from all streams
+                foreach (var buffer in sampleBuffers)      
                 {
-                    short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to a short 
+                    short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to short 
                     mixedSample += sample;
                 }
 

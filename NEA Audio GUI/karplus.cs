@@ -8,8 +8,9 @@ namespace NEA_Audio_GUI
 {
     internal class karplus
     {
-        public RawSourceWaveStream Decay(int sampleRate = 48000, double frequency = 55000d, double amplitude = 1d, double seconds = 5d)
+        public RawSourceWaveStream Decay( double frequency = 55000d, double amplitude = 1d, double seconds = 5d)
         {
+            int sampleRate = Form1.CommonWaveFormat.SampleRate;
             List<short> data = new List<short>();
             int samples = (int)(sampleRate * seconds);
 
@@ -33,7 +34,7 @@ namespace NEA_Audio_GUI
 
             MemoryStream ms = new MemoryStream(data.SelectMany(BitConverter.GetBytes).ToArray());
             ms.Position = 0;
-            return new RawSourceWaveStream(ms, new WaveFormat(sampleRate, 16, 1));
+            return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);
         }
     }
 }

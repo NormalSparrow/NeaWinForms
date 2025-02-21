@@ -9,8 +9,9 @@ namespace NEA_Audio_GUI
 {
     internal class trianglewave
     {
-        public RawSourceWaveStream Triangle(int sampleRate = 48000, double frequency = 440.0, double amplitude = 1.0, double seconds = 5.0)
+        public RawSourceWaveStream Triangle( double frequency = 440.0, double amplitude = 1.0, double seconds = 5.0)
         {
+            int sampleRate = Form1.CommonWaveFormat.SampleRate;
             List<short> data = new List<short>();
             int samples = (int)(sampleRate * seconds);
             double period = sampleRate / frequency;
@@ -22,8 +23,8 @@ namespace NEA_Audio_GUI
             }
 
             MemoryStream ms = new MemoryStream(data.SelectMany(BitConverter.GetBytes).ToArray());
-            ms.Position = 0; 
-            return new RawSourceWaveStream(ms, new WaveFormat(sampleRate, 16, 1));
+            ms.Position = 0;
+            return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);
         }
     }
 }
