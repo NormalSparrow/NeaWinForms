@@ -62,7 +62,6 @@ namespace NEA_Audio_GUI
                 audioPlayer.StopAudio();
             }
 
-
             if (audioStream != null)
             {
                 audioStream.Dispose();
@@ -75,17 +74,12 @@ namespace NEA_Audio_GUI
                 RawSourceWaveStream stream = null;
                 switch (waveType)
                 {
-                    case WaveType.Karplus:
-                        stream = audioKarplus.KarplusString(frequency: frequency);
-                        break;
-
                     case WaveType.Triangle:
                         stream = audioTriangle.Triangle(frequency: frequency);
                         break;
                     case WaveType.Square:
                         stream = audioSquare.Square(frequency: frequency);
                         break;
-
                 }
 
                 if (stream != null)
@@ -94,12 +88,10 @@ namespace NEA_Audio_GUI
                 }
             }
 
-
             if (streams.Count > 0)
             {
                 audioStream = MixStreams(streams.ToArray());
             }
-
 
             if (audioStream != null)
             {
@@ -133,32 +125,32 @@ namespace NEA_Audio_GUI
                 sampleBuffers.Add(buffer);
             }
 
-          
-            if (inUseWaveTypes.Contains(WaveType.Karplus))  //  Karplus decay to all waveforms if Karplus is toggled
+           
+            if (inUseWaveTypes.Contains(WaveType.Karplus)) //application of decay to all waves
             {
                 for (int i = 0; i < sampleBuffers.Count; i++)
                 {
                     byte[] buffer = sampleBuffers[i];
                     short[] samples = new short[buffer.Length / 2];
-
-                   
-                    for (int j = 0; j < samples.Length; j++)
+                    
+                  
+                    for (int j = 0; j < samples.Length; j++)  // byte to short array
                     {
                         samples[j] = BitConverter.ToInt16(buffer, j * 2);
                     }
 
-               
+                    
                     samples = audioKarplus.ApplyDecay(samples);
 
-                    // Convert short array back to byte array
-                    byte[] decayedBuffer = new byte[samples.Length * 2];
+                    
+                    byte[] decayedBuffer = new byte[samples.Length * 2];// Convert short array back to byte array
                     Buffer.BlockCopy(samples, 0, decayedBuffer, 0, decayedBuffer.Length);
                     sampleBuffers[i] = decayedBuffer;
                 }
             }
 
             List<short> mixedSamples = new List<short>();
-            for (int i = 0; i < sampleBuffers[0].Length; i += 2) // Process 2 bytes at a time (16-bit samples)
+            for (int i = 0; i < sampleBuffers[0].Length; i += 2) // Process 2 bytes at a time (16-bit samples)  
             {
                 int mixedSample = 0;
 
