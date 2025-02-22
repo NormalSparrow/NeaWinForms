@@ -76,7 +76,7 @@ namespace NEA_Audio_GUI
                 switch (waveType)
                 {
                     case WaveType.Karplus:
-                        stream = audioKarplus.Decay(frequency: frequency);
+                        stream = audioKarplus.KarplusString(frequency: frequency);
                         break;
 
                     case WaveType.Triangle:
@@ -125,40 +125,62 @@ namespace NEA_Audio_GUI
                     Console.WriteLine("error occured: waveStreams are not formatted the same");
                 }
             }
-            List<byte[]> sampleBuffers = new List<byte[]>(); 
+            List<byte[]> sampleBuffers = new List<byte[]>(); //all bytes of samples are in a list 
             foreach (var stream in streams)
             {
                 byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length); //samples are read to buffer
+                stream.Read(buffer, 0, buffer.Length); //read samples to buffer
                 sampleBuffers.Add(buffer);
             }
+
+          
+            if (inUseWaveTypes.Contains(WaveType.Karplus))  //  Karplus decay to all waveforms if Karplus is toggled
+            {
+                for (int i = 0; i < sampleBuffers.Count; i++)
+                {
+                    byte[] buffer = sampleBuffers[i];
+                    short[] samples = new short[buffer.Length / 2];
+
+                   
+                    for (int j = 0; j < samples.Length; j++)
+                    {
+                        samples[j] = BitConverter.ToInt16(buffer, j * 2);
+                    }
+
+               
+                    samples = audioKarplus.ApplyDecay(samples);
+
+                    // Convert short array back to byte array
+                    byte[] decayedBuffer = new byte[samples.Length * 2];
+                    Buffer.BlockCopy(samples, 0, decayedBuffer, 0, decayedBuffer.Length);
+                    sampleBuffers[i] = decayedBuffer;
+                }
+            }
+
             List<short> mixedSamples = new List<short>();
-            for (int i = 0; i < sampleBuffers[0].Length; i += 2) //two bit read
+            for (int i = 0; i < sampleBuffers[0].Length; i += 2) // Process 2 bytes at a time (16-bit samples)
             {
                 int mixedSample = 0;
 
-
-                foreach (var buffer in sampleBuffers)      
+                foreach (var buffer in sampleBuffers)      // add the samples from all streams
                 {
-                    short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to short 
+                    short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to a short 
                     mixedSample += sample;
                 }
 
                 mixedSample = mixedSample / streams.Length;
                 mixedSample = Math.Max(short.MinValue, Math.Min(short.MaxValue, mixedSample));// makes sure sample is in range
 
-
                 mixedSamples.Add((short)mixedSample);
             }
 
             latestSamples = mixedSamples.Select(s => s / (double)short.MaxValue).Take(500).ToArray(); // to plot points on the scottplot
 
-
             if (latestSamples.Length > 0)
             {
                 Oscillator.Plot.Clear();
                 Oscillator.Plot.Add.Scatter(XAxisValues(latestSamples.Length), latestSamples);
-                Oscillator.Plot.Axes.AutoScale(); 
+                Oscillator.Plot.Axes.AutoScale();
                 Oscillator.Refresh();
             }
 
@@ -166,9 +188,7 @@ namespace NEA_Audio_GUI
             MemoryStream mixedStream = new MemoryStream(mixedBytes);
             mixedStream.Position = 0;
 
-
             return new RawSourceWaveStream(mixedStream, format); //final array
-
         }
         private void decayButton_Click(object sender, EventArgs e)
         {
