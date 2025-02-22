@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             playButton = new Button();
             triangleWaveButton = new Button();
             sawtoothWaveButton = new Button();
@@ -38,13 +39,15 @@
             Oscillator = new ScottPlot.WinForms.FormsPlot();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
+            StopWatchDisplay = new TextBox();
+            stopwatchTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)Frequency).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Volume).BeginInit();
             SuspendLayout();
             // 
             // playButton
             // 
-            playButton.Location = new Point(600, 342);
+            playButton.Location = new Point(575, 346);
             playButton.Margin = new Padding(2, 1, 2, 1);
             playButton.Name = "playButton";
             playButton.Size = new Size(82, 47);
@@ -130,6 +133,7 @@
             textBox1.BackColor = SystemColors.Menu;
             textBox1.Location = new Point(324, 438);
             textBox1.Name = "textBox1";
+            textBox1.ReadOnly = true;
             textBox1.Size = new Size(100, 23);
             textBox1.TabIndex = 8;
             textBox1.Text = "Frequency";
@@ -139,15 +143,27 @@
             textBox2.BackColor = SystemColors.Menu;
             textBox2.Location = new Point(582, 438);
             textBox2.Name = "textBox2";
+            textBox2.ReadOnly = true;
             textBox2.Size = new Size(100, 23);
             textBox2.TabIndex = 9;
             textBox2.Text = "Volume";
+            // 
+            // StopWatchDisplay
+            // 
+            StopWatchDisplay.Location = new Point(662, 346);
+            StopWatchDisplay.Name = "StopWatchDisplay";
+            StopWatchDisplay.PlaceholderText = "RunTime ";
+            StopWatchDisplay.ReadOnly = true;
+            StopWatchDisplay.Size = new Size(154, 23);
+            StopWatchDisplay.TabIndex = 10;
+            StopWatchDisplay.TextChanged += StopWatchDisplay_TextChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(819, 565);
+            Controls.Add(StopWatchDisplay);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
             Controls.Add(Oscillator);
@@ -180,5 +196,8 @@
         private ScottPlot.WinForms.FormsPlot Oscillator;
         private TextBox textBox1;
         private TextBox textBox2;
+        private NAudio.Gui.VolumeSlider volumeSlider1;
+        private TextBox StopWatchDisplay;
+        private System.Windows.Forms.Timer stopwatchTimer;
     }
 }

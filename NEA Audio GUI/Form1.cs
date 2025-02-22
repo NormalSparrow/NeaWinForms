@@ -1,8 +1,8 @@
-
 using NAudio.Wave;
-using System.IO;
-using System.Runtime.CompilerServices;
-
+using System;
+using System.Collections.Generic;
+using System.Media;
+using System.Windows.Forms;
 namespace NEA_Audio_GUI
 {
     public partial class Form1 : Form
@@ -17,9 +17,11 @@ namespace NEA_Audio_GUI
         private List<WaveType> inUseWaveTypes = new List<WaveType>();
         private double frequency = 55000d;
         private Dictionary<WaveType, Button> waveTypeButtons;
-        private double[] latestSamples = new double[500]; // Buffer for visualization
+        private double[] latestSamples = new double[500]; // scottplot live buffer
         private System.Windows.Forms.Timer ScottPlottTimer;
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
+        private StopWatchManager stopWatchManager;
+
         private double[] XAxisValues(int count)
         {
             List<double> xValues = new List<double>();
@@ -56,15 +58,17 @@ namespace NEA_Audio_GUI
             ScottPlottTimer = new System.Windows.Forms.Timer();
             ScottPlottTimer.Interval = 10;
             ScottPlottTimer.Tick += UpdateScottPlott;
+
+            stopWatchManager = new StopWatchManager(StopWatchDisplay, stopwatchTimer);
         }
 
         private async void playButton_Click(object sender, EventArgs e)
         {
-            
+
             if (playButton.Text == "Play")
             {
-             
-                playButton.Text = "Stop"; 
+
+                playButton.Text = "Stop";
 
                 if (audioPlayer.GetState() == PlaybackState.Playing)
                 {
@@ -104,8 +108,10 @@ namespace NEA_Audio_GUI
 
                 if (audioStream != null)
                 {
-                    ScottPlottTimer.Start(); 
+                    stopWatchManager.Start();
+                    ScottPlottTimer.Start();
                     await audioPlayer.PlayAudio(audioStream);
+                    
                 }
                 else
                 {
@@ -114,10 +120,12 @@ namespace NEA_Audio_GUI
             }
             else
             {
-           
-                playButton.Text = "Play"; 
+
+                playButton.Text = "Play";
+                stopWatchManager.Stop();
                 audioPlayer.StopAudio();
-                ScottPlottTimer.Stop(); 
+                ScottPlottTimer.Stop();
+              
             }
         }
 
@@ -211,19 +219,21 @@ namespace NEA_Audio_GUI
 
             if (liveSamples == null)
             {
+                playButton.Text = "Play";
+                stopWatchManager.Stop();
                 ScottPlottTimer.Stop();
                 return;
             }
             if (liveSamples.Length > 0)
             {
-                
+
                 latestSamples = liveSamples
-                    .Select(s => (double)s) 
-                    .Take(1000)             
+                    .Select(s => (double)s)
+                    .Take(1000)
                     .ToArray();
                 UpdatePlot();
             }
-            
+
         }
 
         private void UpdatePlot()
@@ -321,6 +331,10 @@ namespace NEA_Audio_GUI
 
         }
 
+        private void StopWatchDisplay_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }
