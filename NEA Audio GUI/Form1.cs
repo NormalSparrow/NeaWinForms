@@ -18,7 +18,7 @@ namespace NEA_Audio_GUI
         private double frequency = 55000d;
         private Dictionary<WaveType, Button> waveTypeButtons;
         private double[] latestSamples = new double[500]; // Buffer for visualization
-        private System.Windows.Forms.Timer visualizerTimer;
+        private System.Windows.Forms.Timer ScottPlottTimer;
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private double[] XAxisValues(int count)
         {
@@ -53,53 +53,71 @@ namespace NEA_Audio_GUI
             Oscillator.Plot.YLabel("Amplitude");
             Oscillator.Refresh();
 
+            ScottPlottTimer = new System.Windows.Forms.Timer();
+            ScottPlottTimer.Interval = 10;
+            ScottPlottTimer.Tick += UpdateScottPlott;
         }
 
         private async void playButton_Click(object sender, EventArgs e)
         {
-            if (audioPlayer.GetState() == PlaybackState.Playing)
+            
+            if (playButton.Text == "Play")
             {
-                audioPlayer.StopAudio();
-            }
+             
+                playButton.Text = "Stop"; 
 
-            if (audioStream != null)
-            {
-                audioStream.Dispose();
-                audioStream = null;
-            }
-
-            List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>();
-            foreach (var waveType in inUseWaveTypes)
-            {
-                RawSourceWaveStream stream = null;
-                switch (waveType)
+                if (audioPlayer.GetState() == PlaybackState.Playing)
                 {
-                    case WaveType.Triangle:
-                        stream = audioTriangle.Triangle(frequency: frequency);
-                        break;
-                    case WaveType.Square:
-                        stream = audioSquare.Square(frequency: frequency);
-                        break;
+                    audioPlayer.StopAudio();
                 }
 
-                if (stream != null)
+                if (audioStream != null)
                 {
-                    streams.Add(stream);
+                    audioStream.Dispose();
+                    audioStream = null;
                 }
-            }
 
-            if (streams.Count > 0)
-            {
-                audioStream = MixStreams(streams.ToArray());
-            }
+                List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>(); //new wave stream for samples
+                foreach (var waveType in inUseWaveTypes)
+                {
+                    RawSourceWaveStream stream = null;
+                    switch (waveType)
+                    {
+                        case WaveType.Triangle:
+                            stream = audioTriangle.Triangle(frequency: frequency);
+                            break;
+                        case WaveType.Square:
+                            stream = audioSquare.Square(frequency: frequency);
+                            break;
+                    }
 
-            if (audioStream != null)
-            {
-                await audioPlayer.PlayAudio(audioStream);
+                    if (stream != null)
+                    {
+                        streams.Add(stream);
+                    }
+                }
+
+                if (streams.Count > 0)
+                {
+                    audioStream = MixStreams(streams.ToArray());
+                }
+
+                if (audioStream != null)
+                {
+                    ScottPlottTimer.Start(); 
+                    await audioPlayer.PlayAudio(audioStream);
+                }
+                else
+                {
+                    MessageBox.Show("No audio stream generated. Please toggle one or more wave types.");
+                }
             }
             else
             {
-                MessageBox.Show("No audio stream generated. Please toggle one or more wave types.");
+           
+                playButton.Text = "Play"; 
+                audioPlayer.StopAudio();
+                ScottPlottTimer.Stop(); 
             }
         }
 
@@ -166,7 +184,10 @@ namespace NEA_Audio_GUI
                 mixedSamples.Add((short)mixedSample);
             }
 
-            latestSamples = mixedSamples.Select(s => s / (double)short.MaxValue).Take(500).ToArray(); // to plot points on the scottplot
+            latestSamples = mixedSamples
+                .Select(s => (double)s)
+                .Take(1000) //resolution for display is 1000 samples max
+                .ToArray();// to plot points on the scottplot, float to double
 
             if (latestSamples.Length > 0)
             {
@@ -182,6 +203,41 @@ namespace NEA_Audio_GUI
 
             return new RawSourceWaveStream(mixedStream, format); //final array
         }
+
+        private void UpdateScottPlott(object sender, EventArgs e)
+        {
+
+            float[] liveSamples = audioPlayer.GetLiveSamples();
+
+            if (liveSamples == null)
+            {
+                ScottPlottTimer.Stop();
+                return;
+            }
+            if (liveSamples.Length > 0)
+            {
+                
+                latestSamples = liveSamples
+                    .Select(s => (double)s) 
+                    .Take(1000)             
+                    .ToArray();
+                UpdatePlot();
+            }
+            
+        }
+
+        private void UpdatePlot()
+        {
+            if (latestSamples.Length > 0)
+            {
+                Oscillator.Plot.Clear();
+                Oscillator.Plot.Add.Scatter(XAxisValues(latestSamples.Length), latestSamples);
+                Oscillator.Plot.Axes.AutoScale();
+                Oscillator.Refresh();
+            }
+        }
+
+
         private void decayButton_Click(object sender, EventArgs e)
         {
 
