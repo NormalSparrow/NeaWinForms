@@ -22,12 +22,12 @@ namespace NEA_Audio_GUI
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private double[] XAxisValues(int count)
         {
-            List<double> xValues = new List<double>(); 
+            List<double> xValues = new List<double>();
             for (int i = 0; i < count; i++)
             {
-                xValues.Add(i); 
+                xValues.Add(i);
             }
-            return xValues.ToArray(); 
+            return xValues.ToArray();
         }
         public Form1()
         {
@@ -125,24 +125,24 @@ namespace NEA_Audio_GUI
                 sampleBuffers.Add(buffer);
             }
 
-           
+
             if (inUseWaveTypes.Contains(WaveType.Karplus)) //application of decay to all waves
             {
                 for (int i = 0; i < sampleBuffers.Count; i++)
                 {
                     byte[] buffer = sampleBuffers[i];
                     short[] samples = new short[buffer.Length / 2];
-                    
-                  
+
+
                     for (int j = 0; j < samples.Length; j++)  // byte to short array
                     {
                         samples[j] = BitConverter.ToInt16(buffer, j * 2);
                     }
 
-                    
+
                     samples = audioKarplus.ApplyDecay(samples);
 
-                    
+
                     byte[] decayedBuffer = new byte[samples.Length * 2];// Convert short array back to byte array
                     Buffer.BlockCopy(samples, 0, decayedBuffer, 0, decayedBuffer.Length);
                     sampleBuffers[i] = decayedBuffer;
@@ -245,10 +245,6 @@ namespace NEA_Audio_GUI
             frequency = 1000 + (Frequency.Value * 100);
         }
 
-        private void formsPlot1_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private enum WaveType
         {
@@ -259,6 +255,15 @@ namespace NEA_Audio_GUI
         }
 
 
+        private void formsPlot1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
 
     }
 

@@ -36,13 +36,15 @@
             Frequency = new TrackBar();
             Volume = new TrackBar();
             Oscillator = new ScottPlot.WinForms.FormsPlot();
+            textBox1 = new TextBox();
+            textBox2 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)Frequency).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Volume).BeginInit();
             SuspendLayout();
             // 
             // playButton
             // 
-            playButton.Location = new Point(600, 333);
+            playButton.Location = new Point(600, 342);
             playButton.Margin = new Padding(2, 1, 2, 1);
             playButton.Name = "playButton";
             playButton.Size = new Size(82, 47);
@@ -97,19 +99,19 @@
             // 
             // Frequency
             // 
-            Frequency.Location = new Point(566, 468);
+            Frequency.Location = new Point(324, 465);
             Frequency.Margin = new Padding(2, 1, 2, 1);
             Frequency.Name = "Frequency";
-            Frequency.Size = new Size(146, 45);
+            Frequency.Size = new Size(233, 45);
             Frequency.TabIndex = 5;
             Frequency.Scroll += frequency_Scroll;
             // 
             // Volume
             // 
-            Volume.Location = new Point(566, 421);
+            Volume.Location = new Point(575, 465);
             Volume.Margin = new Padding(2, 1, 2, 1);
             Volume.Name = "Volume";
-            Volume.Size = new Size(146, 45);
+            Volume.Size = new Size(233, 45);
             Volume.TabIndex = 6;
             Volume.Scroll += Volume_Scroll;
             // 
@@ -117,17 +119,37 @@
             // 
             Oscillator.BackColor = SystemColors.ControlLightLight;
             Oscillator.DisplayScale = 1F;
-            Oscillator.Location = new Point(123, 12);
+            Oscillator.Location = new Point(0, 12);
             Oscillator.Name = "Oscillator";
-            Oscillator.Size = new Size(533, 317);
+            Oscillator.Size = new Size(816, 317);
             Oscillator.TabIndex = 7;
             Oscillator.Load += formsPlot1_Load;
+            // 
+            // textBox1
+            // 
+            textBox1.BackColor = SystemColors.Menu;
+            textBox1.Location = new Point(324, 438);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(100, 23);
+            textBox1.TabIndex = 8;
+            textBox1.Text = "Frequency";
+            // 
+            // textBox2
+            // 
+            textBox2.BackColor = SystemColors.Menu;
+            textBox2.Location = new Point(582, 438);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(100, 23);
+            textBox2.TabIndex = 9;
+            textBox2.Text = "Volume";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(819, 565);
+            Controls.Add(textBox2);
+            Controls.Add(textBox1);
             Controls.Add(Oscillator);
             Controls.Add(Volume);
             Controls.Add(Frequency);
@@ -139,6 +161,7 @@
             Margin = new Padding(2, 1, 2, 1);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)Frequency).EndInit();
             ((System.ComponentModel.ISupportInitialize)Volume).EndInit();
             ResumeLayout(false);
@@ -155,5 +178,7 @@
         private TrackBar Frequency;
         private TrackBar Volume;
         private ScottPlot.WinForms.FormsPlot Oscillator;
+        private TextBox textBox1;
+        private TextBox textBox2;
     }
 }

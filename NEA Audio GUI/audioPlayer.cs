@@ -8,7 +8,7 @@ internal class AudioPlayer
     {
         wo.Init(rs);
         wo.Play();
-        await Task.Delay(5000);
+        await Task.Delay(5000);//playbacklength
         if (wo.PlaybackState == PlaybackState.Playing) {
             wo.Stop();  
         }
