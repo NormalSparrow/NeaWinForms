@@ -1,4 +1,5 @@
 using NAudio.Wave;
+using Streamloop;
 using System;
 using System.Collections.Generic;
 using System.Media;
@@ -10,6 +11,7 @@ namespace NEA_Audio_GUI
         private karplus audioKarplus;
         private trianglewave audioTriangle;
         private squarewave audioSquare;
+        private sawtoothwave audioSawtooth;
         private AudioPlayer audioPlayer;
         private RawSourceWaveStream? audioStream;
         private byte[] storedAudioData;
@@ -21,7 +23,7 @@ namespace NEA_Audio_GUI
         private System.Windows.Forms.Timer ScottPlottTimer;
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private StopWatchManager stopWatchManager;
-
+        
         private double[] XAxisValues(int count)
         {
             List<double> xValues = new List<double>();
@@ -40,6 +42,7 @@ namespace NEA_Audio_GUI
             audioPlayer = new AudioPlayer();
             audioTriangle = new trianglewave();
             audioSquare = new squarewave();
+            audioSawtooth = new sawtoothwave();
             Volume.Maximum = 1000;
             Frequency.Maximum = 1000;
 
@@ -48,6 +51,7 @@ namespace NEA_Audio_GUI
                 { WaveType.Karplus, decayButton },
                 { WaveType.Triangle, triangleWaveButton }, //dictionary to make it easier to add more waveTypes 
                 { WaveType.Square, squareWaveButton},
+                { WaveType.Sawtooth, sawtoothWaveButton },
             };
 
             Oscillator.Plot.Title("WaveForm visualizer");
@@ -64,10 +68,8 @@ namespace NEA_Audio_GUI
 
         private async void playButton_Click(object sender, EventArgs e)
         {
-
             if (playButton.Text == "Play")
             {
-
                 playButton.Text = "Stop";
 
                 if (audioPlayer.GetState() == PlaybackState.Playing)
@@ -81,7 +83,7 @@ namespace NEA_Audio_GUI
                     audioStream = null;
                 }
 
-                List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>(); //new wave stream for samples
+                List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>(); 
                 foreach (var waveType in inUseWaveTypes)
                 {
                     RawSourceWaveStream stream = null;
@@ -92,6 +94,9 @@ namespace NEA_Audio_GUI
                             break;
                         case WaveType.Square:
                             stream = audioSquare.Square(frequency: frequency);
+                            break;
+                        case WaveType.Sawtooth:
+                            stream = audioSawtooth.Sawtooth(frequency: frequency);
                             break;
                     }
 
@@ -110,22 +115,20 @@ namespace NEA_Audio_GUI
                 {
                     stopWatchManager.Start();
                     ScottPlottTimer.Start();
-                    await audioPlayer.PlayAudio(audioStream);
-                    
+                    await audioPlayer.PlayAudio(audioStream); // until bool playing = false, this will play audio
                 }
                 else
                 {
                     MessageBox.Show("No audio stream generated. Please toggle one or more wave types.");
+                    playButton.Text = "Play";
                 }
             }
             else
             {
-
                 playButton.Text = "Play";
                 stopWatchManager.Stop();
-                audioPlayer.StopAudio();
+                audioPlayer.StopAudio(); 
                 ScottPlottTimer.Stop();
-              
             }
         }
 
@@ -211,7 +214,7 @@ namespace NEA_Audio_GUI
 
             return new RawSourceWaveStream(mixedStream, format); //final array
         }
-
+    
         private void UpdateScottPlott(object sender, EventArgs e)
         {
 
@@ -261,6 +264,10 @@ namespace NEA_Audio_GUI
         {
             toggleButton(WaveType.Square);
         }
+        private void sawtoothWaveButton_Click(object sender, EventArgs e)
+        {
+            toggleButton(WaveType.Sawtooth);
+        }
         private void toggleButton(WaveType waveType)
         {
             if (inUseWaveTypes.Contains(waveType))
@@ -273,6 +280,7 @@ namespace NEA_Audio_GUI
             }
             ButtonAppearance();
         }
+        
         private void ButtonAppearance()
         {
             //    decayButton.BackColor = inUseWaveTypes.Contains(WaveType.Karplus) ? Color.Green : SystemColors.Control;
@@ -317,7 +325,8 @@ namespace NEA_Audio_GUI
 
             Karplus,
             Triangle,
-            Square
+            Square,
+            Sawtooth
         }
 
 
@@ -335,6 +344,8 @@ namespace NEA_Audio_GUI
         {
 
         }
+
+
     }
 
 }

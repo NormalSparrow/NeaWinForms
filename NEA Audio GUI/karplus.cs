@@ -9,12 +9,12 @@ namespace NEA_Audio_GUI
             int sampleRate = Form1.CommonWaveFormat.SampleRate;
             List<short> decayedSamples = new List<short>();
 
-            // Use a fixed seed for consistent results
-            Random rand = new Random(42); // You can use any integer value as the seed
+          
+            Random rand = new Random(45);
             Queue<double> buf = new Queue<double>();
 
-            // Initialize the buffer with random values
-            for (int n = 0; n < sampleRate / (55000d / 1000); n++) // Use the same buffer size as in Decay
+            
+            for (int n = 0; n < sampleRate / (55000d / 1000); n++) // create buffers for samples
             {
                 buf.Enqueue(rand.NextDouble() * 2.0 - 1.0);
             }

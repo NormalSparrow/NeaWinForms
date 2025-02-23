@@ -35,6 +35,7 @@ namespace NEA_Audio_GUI
         public void Start()
         {
             stopwatch.Restart();
+            display.Text = "00:00:00";
             timer.Start();
         }
 
@@ -44,10 +45,6 @@ namespace NEA_Audio_GUI
             timer.Stop();
         }
 
-        public void Reset()
-        {
-            stopwatch.Reset();
-            display.Text = "00:00:00";
-        }
+      
     }
 }

@@ -77,6 +77,7 @@
             sawtoothWaveButton.TabIndex = 2;
             sawtoothWaveButton.Text = "N";
             sawtoothWaveButton.UseVisualStyleBackColor = true;
+            sawtoothWaveButton.Click += sawtoothWaveButton_Click;
             // 
             // squareWaveButton
             // 
