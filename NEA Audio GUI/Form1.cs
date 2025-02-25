@@ -23,7 +23,7 @@ namespace NEA_Audio_GUI
         private System.Windows.Forms.Timer ScottPlottTimer;
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private StopWatchManager stopWatchManager;
-        
+
         private double[] XAxisValues(int count)
         {
             List<double> xValues = new List<double>();
@@ -83,7 +83,7 @@ namespace NEA_Audio_GUI
                     audioStream = null;
                 }
 
-                List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>(); 
+                List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>();
                 foreach (var waveType in inUseWaveTypes)
                 {
                     RawSourceWaveStream stream = null;
@@ -127,7 +127,7 @@ namespace NEA_Audio_GUI
             {
                 playButton.Text = "Play";
                 stopWatchManager.Stop();
-                audioPlayer.StopAudio(); 
+                audioPlayer.StopAudio();
                 ScottPlottTimer.Stop();
             }
         }
@@ -214,7 +214,7 @@ namespace NEA_Audio_GUI
 
             return new RawSourceWaveStream(mixedStream, format); //final array
         }
-    
+
         private void UpdateScottPlott(object sender, EventArgs e)
         {
 
@@ -280,7 +280,7 @@ namespace NEA_Audio_GUI
             }
             ButtonAppearance();
         }
-        
+
         private void ButtonAppearance()
         {
             //    decayButton.BackColor = inUseWaveTypes.Contains(WaveType.Karplus) ? Color.Green : SystemColors.Control;
@@ -345,7 +345,12 @@ namespace NEA_Audio_GUI
 
         }
 
+        private void DownloadButton_Click(object sender, EventArgs e)
+        {
 
+            DownloadPopupForm downloadPopup = new DownloadPopupForm();
+            downloadPopup.ShowDialog();
+        }
     }
 
 }

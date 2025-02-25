@@ -41,6 +41,7 @@
             textBox2 = new TextBox();
             StopWatchDisplay = new TextBox();
             stopwatchTimer = new System.Windows.Forms.Timer(components);
+            DownloadButton = new Button();
             ((System.ComponentModel.ISupportInitialize)Frequency).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Volume).BeginInit();
             SuspendLayout();
@@ -159,11 +160,22 @@
             StopWatchDisplay.TabIndex = 10;
             StopWatchDisplay.TextChanged += StopWatchDisplay_TextChanged;
             // 
+            // DownloadButton
+            // 
+            DownloadButton.Location = new Point(43, 495);
+            DownloadButton.Name = "DownloadButton";
+            DownloadButton.Size = new Size(156, 41);
+            DownloadButton.TabIndex = 11;
+            DownloadButton.Text = "Download ";
+            DownloadButton.UseVisualStyleBackColor = true;
+            DownloadButton.Click += DownloadButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(819, 565);
+            Controls.Add(DownloadButton);
             Controls.Add(StopWatchDisplay);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
@@ -200,5 +212,6 @@
         private NAudio.Gui.VolumeSlider volumeSlider1;
         private TextBox StopWatchDisplay;
         private System.Windows.Forms.Timer stopwatchTimer;
+        private Button DownloadButton;
     }
 }

@@ -19,17 +19,17 @@ namespace NEA_Audio_GUI
                 buf.Enqueue(rand.NextDouble() * 2.0 - 1.0);
             }
 
-            // Apply the Karplus-Strong decay to the input samples
-            for (int n = 0; n < inputSamples.Length; n++)
+            
+            for (int n = 0; n < inputSamples.Length; n++)//karplus logic
             {
                 double first = buf.Dequeue();
                 double next = buf.Peek();
                 double sample = 0.996 * 0.5 * (first + next);
                 buf.Enqueue(sample);
 
-                // Mix the input sample with the decayed sample
-                double mixedSample = (inputSamples[n] / (double)short.MaxValue) + sample;
-                mixedSample = Math.Max(-1.0, Math.Min(1.0, mixedSample)); // Clamp to [-1, 1]
+                
+                double mixedSample = (inputSamples[n] / (double)short.MaxValue) + sample;//add sample to mixed sample
+                mixedSample = Math.Max(-1.0, Math.Min(1.0, mixedSample)); // set to range 1,-1
 
                 decayedSamples.Add((short)(mixedSample * short.MaxValue));
             }
