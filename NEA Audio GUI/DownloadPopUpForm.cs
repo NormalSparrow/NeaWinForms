@@ -48,7 +48,7 @@ namespace NEA_Audio_GUI
  
 
     
-        public void GenerateAndDownloadAudioData(double durationInSeconds)
+        public static void GenerateAndDownloadAudioData(double durationInSeconds)
         {
             
             byte[] audioData = GenerateAudioData(durationInSeconds);
@@ -75,7 +75,7 @@ namespace NEA_Audio_GUI
         }
 
        
-        private byte[] GenerateAudioData(double durationInSeconds)
+        private static byte[] GenerateAudioData(double durationInSeconds)
         {
             
             int sampleRate = 44100; 
@@ -88,7 +88,7 @@ namespace NEA_Audio_GUI
         }
 
        
-        private byte[] RepeatAudioData(byte[] audioData, double durationInSeconds)
+        private static byte[] RepeatAudioData(byte[] audioData, double durationInSeconds)
         {
             if (audioData == null || audioData.Length == 0)
             {
@@ -115,7 +115,7 @@ namespace NEA_Audio_GUI
         }
 
 
-        private void DownloadAudio(byte[] audioData)
+        private static void DownloadAudio(byte[] audioData)
         {
             if (audioData == null || audioData.Length == 0)
             {
@@ -124,7 +124,7 @@ namespace NEA_Audio_GUI
             }
 
           
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) //user chooses folder
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) 
             {
                 folderDialog.Description = "Select where to save the file";
                 folderDialog.ShowNewFolderButton = true;

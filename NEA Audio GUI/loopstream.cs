@@ -9,7 +9,7 @@ namespace Streamloop
 {
     public class LoopStream : WaveStream
     {
-        WaveStream sourceStream;
+       readonly WaveStream sourceStream;
 
 
         public LoopStream(WaveStream sourceStream)

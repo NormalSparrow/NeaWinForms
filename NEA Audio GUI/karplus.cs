@@ -2,9 +2,9 @@
 
 namespace NEA_Audio_GUI
 {
-    public class karplus
+    public class Karplus
     {
-        public short[] ApplyDecay(short[] inputSamples)
+        public  short[] ApplyDecay(short[] inputSamples)
         {
             int sampleRate = Form1.CommonWaveFormat.SampleRate;
             List<short> decayedSamples = new List<short>();
@@ -20,7 +20,7 @@ namespace NEA_Audio_GUI
             }
 
             
-            for (int n = 0; n < inputSamples.Length; n++)//karplus logic
+            for (int n = 0; n < inputSamples.Length; n++)//Karplus logic
             {
                 double first = buf.Dequeue();
                 double next = buf.Peek();

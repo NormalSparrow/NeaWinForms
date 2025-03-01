@@ -30,9 +30,9 @@
         {
             components = new System.ComponentModel.Container();
             playButton = new Button();
-            triangleWaveButton = new Button();
-            sawtoothWaveButton = new Button();
-            squareWaveButton = new Button();
+            TrianglewaveButton = new Button();
+            SawtoothWaveButton = new Button();
+            SquarewaveButton = new Button();
             decayButton = new Button();
             Frequency = new TrackBar();
             Volume = new TrackBar();
@@ -57,39 +57,39 @@
             playButton.UseVisualStyleBackColor = true;
             playButton.Click += playButton_Click;
             // 
-            // triangleWaveButton
+            // TrianglewaveButton
             // 
-            triangleWaveButton.Location = new Point(121, 382);
-            triangleWaveButton.Margin = new Padding(2, 1, 2, 1);
-            triangleWaveButton.Name = "triangleWaveButton";
-            triangleWaveButton.Size = new Size(78, 49);
-            triangleWaveButton.TabIndex = 1;
-            triangleWaveButton.Text = "▲";
-            triangleWaveButton.UseVisualStyleBackColor = true;
-            triangleWaveButton.Click += triangleWaveButton_Click;
+            TrianglewaveButton.Location = new Point(121, 382);
+            TrianglewaveButton.Margin = new Padding(2, 1, 2, 1);
+            TrianglewaveButton.Name = "TrianglewaveButton";
+            TrianglewaveButton.Size = new Size(78, 49);
+            TrianglewaveButton.TabIndex = 1;
+            TrianglewaveButton.Text = "▲";
+            TrianglewaveButton.UseVisualStyleBackColor = true;
+            TrianglewaveButton.Click += TrianglewaveButton_Click;
             // 
-            // sawtoothWaveButton
+            // SawtoothWaveButton
             // 
-            sawtoothWaveButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            sawtoothWaveButton.Location = new Point(43, 382);
-            sawtoothWaveButton.Margin = new Padding(2, 1, 2, 1);
-            sawtoothWaveButton.Name = "sawtoothWaveButton";
-            sawtoothWaveButton.Size = new Size(76, 49);
-            sawtoothWaveButton.TabIndex = 2;
-            sawtoothWaveButton.Text = "N";
-            sawtoothWaveButton.UseVisualStyleBackColor = true;
-            sawtoothWaveButton.Click += sawtoothWaveButton_Click;
+            SawtoothWaveButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            SawtoothWaveButton.Location = new Point(43, 382);
+            SawtoothWaveButton.Margin = new Padding(2, 1, 2, 1);
+            SawtoothWaveButton.Name = "SawtoothWaveButton";
+            SawtoothWaveButton.Size = new Size(76, 49);
+            SawtoothWaveButton.TabIndex = 2;
+            SawtoothWaveButton.Text = "N";
+            SawtoothWaveButton.UseVisualStyleBackColor = true;
+            SawtoothWaveButton.Click += SawtoothWaveButton_Click;
             // 
-            // squareWaveButton
+            // SquarewaveButton
             // 
-            squareWaveButton.Location = new Point(43, 333);
-            squareWaveButton.Margin = new Padding(2, 1, 2, 1);
-            squareWaveButton.Name = "squareWaveButton";
-            squareWaveButton.Size = new Size(76, 47);
-            squareWaveButton.TabIndex = 3;
-            squareWaveButton.Text = " ⬛";
-            squareWaveButton.UseVisualStyleBackColor = true;
-            squareWaveButton.Click += squareWaveButton_Click;
+            SquarewaveButton.Location = new Point(43, 333);
+            SquarewaveButton.Margin = new Padding(2, 1, 2, 1);
+            SquarewaveButton.Name = "SquarewaveButton";
+            SquarewaveButton.Size = new Size(76, 47);
+            SquarewaveButton.TabIndex = 3;
+            SquarewaveButton.Text = " ⬛";
+            SquarewaveButton.UseVisualStyleBackColor = true;
+            SquarewaveButton.Click += SquarewaveButton_Click;
             // 
             // decayButton
             // 
@@ -128,7 +128,7 @@
             Oscillator.Name = "Oscillator";
             Oscillator.Size = new Size(816, 317);
             Oscillator.TabIndex = 7;
-            Oscillator.Load += formsPlot1_Load;
+          
             // 
             // textBox1
             // 
@@ -158,7 +158,6 @@
             StopWatchDisplay.ReadOnly = true;
             StopWatchDisplay.Size = new Size(154, 23);
             StopWatchDisplay.TabIndex = 10;
-            StopWatchDisplay.TextChanged += StopWatchDisplay_TextChanged;
             // 
             // DownloadButton
             // 
@@ -183,14 +182,14 @@
             Controls.Add(Volume);
             Controls.Add(Frequency);
             Controls.Add(decayButton);
-            Controls.Add(squareWaveButton);
-            Controls.Add(sawtoothWaveButton);
-            Controls.Add(triangleWaveButton);
+            Controls.Add(SquarewaveButton);
+            Controls.Add(SawtoothWaveButton);
+            Controls.Add(TrianglewaveButton);
             Controls.Add(playButton);
             Margin = new Padding(2, 1, 2, 1);
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
+            
             ((System.ComponentModel.ISupportInitialize)Frequency).EndInit();
             ((System.ComponentModel.ISupportInitialize)Volume).EndInit();
             ResumeLayout(false);
@@ -200,9 +199,9 @@
         #endregion
 
         private Button playButton;
-        private Button triangleWaveButton;
-        private Button sawtoothWaveButton;
-        private Button squareWaveButton;
+        private Button TrianglewaveButton;
+        private Button SawtoothWaveButton;
+        private Button SquarewaveButton;
         private Button decayButton;
         private TrackBar Frequency;
         private TrackBar Volume;

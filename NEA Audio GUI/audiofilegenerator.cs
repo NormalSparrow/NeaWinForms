@@ -9,15 +9,15 @@ namespace NEA_Audio_GUI
 {
     public class AudioFileGenerator
     {
-        private readonly karplus audioKarplus;
-        private readonly trianglewave audioTriangle;
-        private readonly squarewave audioSquare;
-        private readonly sawtoothwave audioSawtooth;
+        private readonly Karplus audioKarplus;
+        private readonly Trianglewave audioTriangle;
+        private readonly Squarewave audioSquare;
+        private readonly SawtoothWave audioSawtooth;
         private readonly List<WaveType> inUseWaveTypes;
         private readonly double frequency;
         private readonly WaveFormat commonWaveFormat;
 
-        public AudioFileGenerator(karplus audioKarplus, trianglewave audioTriangle, squarewave audioSquare, sawtoothwave audioSawtooth, List<WaveType> inUseWaveTypes, double frequency, WaveFormat commonWaveFormat)
+        public AudioFileGenerator(Karplus audioKarplus, Trianglewave audioTriangle, Squarewave audioSquare, SawtoothWave audioSawtooth, List<WaveType> inUseWaveTypes, double frequency, WaveFormat commonWaveFormat)
         {
             this.audioKarplus = audioKarplus;
             this.audioTriangle = audioTriangle;

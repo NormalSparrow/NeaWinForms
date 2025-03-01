@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace NEA_Audio_GUI
 {
-    public class sawtoothwave
+    public  class SawtoothWave
     {
-        public RawSourceWaveStream Sawtooth(double frequency = 440.0, double amplitude = 1.0, double seconds = 5.0)
+        public  RawSourceWaveStream Sawtooth(double frequency = 440.0, double amplitude = 1.0, double seconds = 5.0)
         {
             int sampleRate = Form1.CommonWaveFormat.SampleRate;
             List<short> data = new List<short>();

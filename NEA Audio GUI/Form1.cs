@@ -9,22 +9,19 @@ namespace NEA_Audio_GUI
 {
     public partial class Form1 : Form
     {
-        private karplus audioKarplus;
-        private trianglewave audioTriangle;
-        private squarewave audioSquare;
-        private sawtoothwave audioSawtooth;
+        private Karplus audioKarplus;
+        private Trianglewave audioTriangle;
+        private Squarewave audioSquare;
+        private SawtoothWave audioSawtooth;
         private AudioPlayer audioPlayer;
         private RawSourceWaveStream? audioStream;
-        private byte[] storedAudioData;
-        private WaveType waveType;
         private List<WaveType> inUseWaveTypes = new List<WaveType>();
         private double frequency = 55000d;
         private Dictionary<WaveType, Button> waveTypeButtons;
         private double[] latestSamples = new double[500]; // scottplot live buffer
         private System.Windows.Forms.Timer ScottPlottTimer;
-        public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
+        public readonly static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private StopWatchManager stopWatchManager;
-        // public byte[] previousArray;
         private AudioFileGenerator audioFileGenerator;
 
 
@@ -33,11 +30,11 @@ namespace NEA_Audio_GUI
         {
             InitializeComponent();
 
-            audioKarplus = new karplus();
+            audioKarplus = new Karplus();
             audioPlayer = new AudioPlayer();
-            audioTriangle = new trianglewave();
-            audioSquare = new squarewave();
-            audioSawtooth = new sawtoothwave();
+            audioTriangle = new Trianglewave();
+            audioSquare = new Squarewave();
+            audioSawtooth = new SawtoothWave();
             Volume.Maximum = 1000;
             Frequency.Maximum = 1000;
 
@@ -54,9 +51,9 @@ namespace NEA_Audio_GUI
 
             waveTypeButtons = new Dictionary<WaveType, Button>() {
                 { WaveType.Karplus, decayButton },
-                { WaveType.Triangle, triangleWaveButton }, //dictionary to make it easier to add more waveTypes 
-                { WaveType.Square, squareWaveButton},
-                { WaveType.Sawtooth, sawtoothWaveButton },
+                { WaveType.Triangle, TrianglewaveButton }, //dictionary to make it easier to add more waveTypes 
+                { WaveType.Square, SquarewaveButton},
+                { WaveType.Sawtooth, SawtoothWaveButton },
             };
 
             Oscillator.Plot.Title("WaveForm visualizer");
@@ -84,7 +81,7 @@ namespace NEA_Audio_GUI
 
                 if (audioStream != null)
                 {
-                    audioStream.Dispose();
+                    await audioStream.DisposeAsync(); 
                     audioStream = null;
                 }
 
@@ -141,7 +138,7 @@ namespace NEA_Audio_GUI
             }
         }
 
-        private double[] XAxisValues(int count)
+        private static double[] XAxisValues(int count)
         {
             List<double> xValues = new List<double>();
             for (int i = 0; i < count; i++)
@@ -188,17 +185,17 @@ namespace NEA_Audio_GUI
             toggleButton(WaveType.Karplus);
         }
 
-        private void triangleWaveButton_Click(object sender, EventArgs e)
+        private void TrianglewaveButton_Click(object sender, EventArgs e)
         {
             toggleButton(WaveType.Triangle);
         }
 
-        private void squareWaveButton_Click(object sender, EventArgs e)
+        private void SquarewaveButton_Click(object sender, EventArgs e)
         {
             toggleButton(WaveType.Square);
         }
 
-        private void sawtoothWaveButton_Click(object sender, EventArgs e)
+        private void SawtoothWaveButton_Click(object sender, EventArgs e)
         {
             toggleButton(WaveType.Sawtooth);
         }
@@ -247,18 +244,6 @@ namespace NEA_Audio_GUI
         private void frequency_Scroll(object sender, EventArgs e)
         {
             frequency = 1000 + (Frequency.Value * 100);
-        }
-
-        private void formsPlot1_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void StopWatchDisplay_TextChanged(object sender, EventArgs e)
-        {
         }
 
         private void DownloadButton_Click(object sender, EventArgs e)
