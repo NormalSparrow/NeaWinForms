@@ -65,6 +65,8 @@ namespace NEA_Audio_GUI
             ScottPlottTimer.Tick += UpdateScottPlott;
 
             stopWatchManager = new StopWatchManager(StopWatchDisplay, stopwatchTimer);
+          
+
         }
 
         private async void playButton_Click(object sender, EventArgs e)
@@ -109,7 +111,6 @@ namespace NEA_Audio_GUI
 
                 if (streams.Count > 0)
                 {
-                    // Use AudioFileGenerator to mix streams
                     var audioFileGenerator = new AudioFileGenerator(
                         audioKarplus,
                         audioTriangle,
@@ -120,11 +121,11 @@ namespace NEA_Audio_GUI
                         CommonWaveFormat
                     );
 
-                    // Mix streams and convert the result to a RawSourceWaveStream
-                    byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray());
+
+                    byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray()); 
                     MemoryStream mixedStream = new MemoryStream(mixedBytes);
                     mixedStream.Position = 0;
-                    audioStream = new RawSourceWaveStream(mixedStream, CommonWaveFormat);
+                    audioStream = new RawSourceWaveStream(mixedStream, CommonWaveFormat); // result of mixstreams 
                 }
 
                 if (audioStream != null)
@@ -135,7 +136,7 @@ namespace NEA_Audio_GUI
                 }
                 else
                 {
-                    MessageBox.Show("No audio stream generated. Please toggle one or more wave types.");
+                    MessageBox.Show("No audio stream generated, click one or more wavetypes to mix");
                     playButton.Text = "Play";
                 }
             }
@@ -273,14 +274,14 @@ namespace NEA_Audio_GUI
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
-            // Show the DownloadPopupForm to get the duration
+        
             using (DownloadPopupForm downloadPopup = new DownloadPopupForm())
             {
                 if (downloadPopup.ShowDialog() == DialogResult.OK)
                 {
                     double durationInSeconds = downloadPopup.Duration;
 
-                    // Create an instance of AudioFileGenerator
+                   
                     var audioFileGenerator = new AudioFileGenerator(
                         audioKarplus,
                         audioTriangle,
@@ -291,7 +292,7 @@ namespace NEA_Audio_GUI
                         CommonWaveFormat
                     );
 
-                    // Generate and download the audio data
+                    
                     audioFileGenerator.GenerateAndDownloadAudioData(durationInSeconds);
                 }
             }

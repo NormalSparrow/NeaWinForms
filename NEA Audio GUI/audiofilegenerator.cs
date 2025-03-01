@@ -193,11 +193,11 @@ namespace NEA_Audio_GUI
                     try
                     {
                         File.WriteAllBytes(filePath, audioData);
-                        MessageBox.Show("Audio sample saved successfully!", "Download Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("audio saved", "Download Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred while saving the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
