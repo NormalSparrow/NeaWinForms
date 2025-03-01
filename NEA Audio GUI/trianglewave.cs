@@ -26,7 +26,7 @@ namespace NEA_Audio_GUI
 
             MemoryStream ms = new MemoryStream(data.SelectMany(BitConverter.GetBytes).ToArray());
             ms.Position = 0;
-            return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);  //converts to same format and adds to stream
+            return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);  
         }
     }
 }

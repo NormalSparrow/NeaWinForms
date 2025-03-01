@@ -55,7 +55,7 @@
             playButton.TabIndex = 0;
             playButton.Text = "Play";
             playButton.UseVisualStyleBackColor = true;
-            playButton.Click += playButton_Click;
+            playButton.Click += PlayButton_Click;
             // 
             // TrianglewaveButton
             // 

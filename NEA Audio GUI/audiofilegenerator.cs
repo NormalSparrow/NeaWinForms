@@ -36,7 +36,7 @@ namespace NEA_Audio_GUI
             if (audioData != null)
             {
               
-                byte[] repeatedAudioData = RepeatAudioData(audioData, durationInSeconds);  //Using durationInseconds as the independant var.
+                byte[] repeatedAudioData = RepeatAudioData(audioData, durationInSeconds);  
 
                 if (repeatedAudioData != null)
                 {
@@ -86,7 +86,7 @@ namespace NEA_Audio_GUI
                 return MixStreams(streams.ToArray());
             }
 
-            return null; 
+            return new byte[0]; 
         }
 
         public byte[] MixStreams(RawSourceWaveStream[] streams)
@@ -102,25 +102,25 @@ namespace NEA_Audio_GUI
             foreach (var stream in streams)
             {
                 byte[] buffer = new byte[stream.Length];
-                _ = stream.Read(buffer, 0, buffer.Length); // Read samples to buffer
+                _ = stream.Read(buffer, 0, buffer.Length); 
                 sampleBuffers.Add(buffer);
             }
 
-            if (inUseWaveTypes.Contains(WaveType.Karplus)) // Apply decay to all waves
+            if (inUseWaveTypes.Contains(WaveType.Karplus)) 
             {
                 for (int i = 0; i < sampleBuffers.Count; i++)
                 {
                     byte[] buffer = sampleBuffers[i];
                     short[] samples = new short[buffer.Length / 2];
 
-                    for (int j = 0; j < samples.Length; j++) //byte to short array
+                    for (int j = 0; j < samples.Length; j++) 
                     {
                         samples[j] = BitConverter.ToInt16(buffer, j * 2);
                     }
 
                     samples = audioKarplus.ApplyDecay(samples);
 
-                    byte[] decayedBuffer = new byte[samples.Length * 2]; // short to byte array
+                    byte[] decayedBuffer = new byte[samples.Length * 2]; 
                     Buffer.BlockCopy(samples, 0, decayedBuffer, 0, decayedBuffer.Length);
                     sampleBuffers[i] = decayedBuffer;
                 }
@@ -131,9 +131,9 @@ namespace NEA_Audio_GUI
             {
                 int mixedSample = 0;
 
-                foreach (var buffer in sampleBuffers) // combining all streams
+                foreach (var buffer in sampleBuffers) 
                 {
-                    short sample = BitConverter.ToInt16(buffer, i); // each short = 2 bytes
+                    short sample = BitConverter.ToInt16(buffer, i); 
                     mixedSample += sample;
                 }
 
@@ -150,7 +150,7 @@ namespace NEA_Audio_GUI
         {
             if (audioData == null || audioData.Length == 0)
             {
-                return null;
+                return new byte[0];
             }
 
             int sampleRate = commonWaveFormat.SampleRate;

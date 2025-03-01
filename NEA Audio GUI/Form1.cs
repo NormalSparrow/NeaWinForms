@@ -2,7 +2,9 @@ using NAudio.Wave;
 using Streamloop;
 using System;
 using System.Collections.Generic;
-using System.Media;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace NEA_Audio_GUI
@@ -18,13 +20,11 @@ namespace NEA_Audio_GUI
         private List<WaveType> inUseWaveTypes = new List<WaveType>();
         private double frequency = 55000d;
         private Dictionary<WaveType, Button> waveTypeButtons;
-        private double[] latestSamples = new double[500]; // scottplot live buffer
+        private double[] latestSamples = new double[500]; // ScottPlot live buffer
         private System.Windows.Forms.Timer ScottPlottTimer;
         public readonly static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private StopWatchManager stopWatchManager;
         private AudioFileGenerator audioFileGenerator;
-
-
 
         public Form1()
         {
@@ -38,7 +38,6 @@ namespace NEA_Audio_GUI
             Volume.Maximum = 1000;
             Frequency.Maximum = 1000;
 
-            
             audioFileGenerator = new AudioFileGenerator(
                 audioKarplus,
                 audioTriangle,
@@ -51,8 +50,8 @@ namespace NEA_Audio_GUI
 
             waveTypeButtons = new Dictionary<WaveType, Button>() {
                 { WaveType.Karplus, decayButton },
-                { WaveType.Triangle, TrianglewaveButton }, //dictionary to make it easier to add more waveTypes 
-                { WaveType.Square, SquarewaveButton},
+                { WaveType.Triangle, TrianglewaveButton },
+                { WaveType.Square, SquarewaveButton },
                 { WaveType.Sawtooth, SawtoothWaveButton },
             };
 
@@ -74,68 +73,102 @@ namespace NEA_Audio_GUI
             {
                 playButton.Text = "Stop";
 
-                if (audioPlayer.GetState() == PlaybackState.Playing)
-                {
-                    audioPlayer.StopAudio();
-                }
+                StopAudioIfPlaying();
+                await DisposeAudioStreamAsync();
 
-                if (audioStream != null)
-                {
-                    await audioStream.DisposeAsync(); 
-                    audioStream = null;
-                }
-
-                List<RawSourceWaveStream> streams = new List<RawSourceWaveStream>();
-                foreach (var waveType in inUseWaveTypes)
-                {
-                    RawSourceWaveStream stream = null;
-                    switch (waveType)
-                    {
-                        case WaveType.Triangle:
-                            stream = audioTriangle.Triangle(frequency: frequency);
-                            break;
-                        case WaveType.Square:
-                            stream = audioSquare.Square(frequency: frequency);
-                            break;
-                        case WaveType.Sawtooth:
-                            stream = audioSawtooth.Sawtooth(frequency: frequency);
-                            break;
-                    }
-
-                    if (stream != null)
-                    {
-                        streams.Add(stream);
-                    }
-                }
-
+                var streams = CreateWaveStreams();
                 if (streams.Count > 0)
                 {
-                    // Use the class-level audioFileGenerator to mix streams
-                    byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray());
-                    MemoryStream mixedStream = new MemoryStream(mixedBytes);
-                    mixedStream.Position = 0;
-                    audioStream = new RawSourceWaveStream(mixedStream, CommonWaveFormat);
-                }
-
-                if (audioStream != null)
-                {
-                    stopWatchManager.Start();
-                    ScottPlottTimer.Start();
-                    await audioPlayer.PlayAudio(audioStream);
+                    audioStream = CreateMixedStream(streams);
+                    if (audioStream != null)
+                    {
+                        StartTimers();
+                        await audioPlayer.PlayAudio(audioStream);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("toggle one or more waves types to generate audio");
+                    ShowNoWaveTypesSelectedMessage();
                     playButton.Text = "Play";
                 }
             }
             else
             {
-                playButton.Text = "Play";
-                stopWatchManager.Stop();
-                audioPlayer.StopAudio();
-                ScottPlottTimer.Stop();
+                StopPlayback();
             }
+        }
+
+        private void StopPlayback()
+        {
+            playButton.Text = "Play";
+            stopWatchManager.Stop();
+            audioPlayer.StopAudio();
+            ScottPlottTimer.Stop();
+        }
+
+        private void StopAudioIfPlaying()
+        {
+            if (audioPlayer.GetState() == PlaybackState.Playing)
+            {
+                audioPlayer.StopAudio();
+            }
+        }
+
+        private async Task DisposeAudioStreamAsync()
+        {
+            if (audioStream != null)
+            {
+                await audioStream.DisposeAsync();
+                audioStream = null;
+            }
+        }
+
+        private List<RawSourceWaveStream> CreateWaveStreams()
+        {
+            var streams = new List<RawSourceWaveStream>();
+            foreach (var waveType in inUseWaveTypes)
+            {
+                var stream = CreateWaveStream(waveType);
+                if (stream != null)
+                {
+                    streams.Add(stream);
+                }
+            }
+            return streams;
+        }
+
+        private RawSourceWaveStream CreateWaveStream(WaveType waveType)
+        {
+            switch (waveType)
+            {
+                case WaveType.Triangle:
+                    return audioTriangle.Triangle(frequency: frequency);
+                case WaveType.Square:
+                    return audioSquare.Square(frequency: frequency);
+                case WaveType.Sawtooth:
+                    return audioSawtooth.Sawtooth(frequency: frequency);
+                default:
+                    return null;
+            }
+        }
+
+        private RawSourceWaveStream CreateMixedStream(List<RawSourceWaveStream> streams)
+        {
+            byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray());
+            var mixedStream = new MemoryStream(mixedBytes);
+            mixedStream.Position = 0;
+            return new RawSourceWaveStream(mixedStream, CommonWaveFormat);
+        }
+
+        private void StartTimers()
+        {
+            stopWatchManager.Start();
+            ScottPlottTimer.Start();
+        }
+
+        private void ShowNoWaveTypesSelectedMessage()
+        {
+            MessageBox.Show("Toggle one or more wave types to generate audio.");
         }
 
         private static double[] XAxisValues(int count)
@@ -253,8 +286,6 @@ namespace NEA_Audio_GUI
                 if (downloadPopup.ShowDialog() == DialogResult.OK)
                 {
                     double durationInSeconds = downloadPopup.Duration;
-
-                    
                     audioFileGenerator.GenerateAndDownloadAudioData(durationInSeconds);
                 }
             }

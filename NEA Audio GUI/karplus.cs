@@ -14,13 +14,13 @@ namespace NEA_Audio_GUI
             Queue<double> buf = new Queue<double>();
 
             
-            for (int n = 0; n < sampleRate / (55000d / 1000); n++) // create buffers for samples
+            for (int n = 0; n < sampleRate / (55000d / 1000); n++) 
             {
                 buf.Enqueue(rand.NextDouble() * 2.0 - 1.0);
             }
 
             
-            for (int n = 0; n < inputSamples.Length; n++)//Karplus logic
+            for (int n = 0; n < inputSamples.Length; n++)
             {
                 double first = buf.Dequeue();
                 double next = buf.Peek();
@@ -28,8 +28,8 @@ namespace NEA_Audio_GUI
                 buf.Enqueue(sample);
 
                 
-                double mixedSample = (inputSamples[n] / (double)short.MaxValue) + sample;//add sample to mixed sample
-                mixedSample = Math.Max(-1.0, Math.Min(1.0, mixedSample)); // set to range 1,-1
+                double mixedSample = (inputSamples[n] / (double)short.MaxValue) + sample;
+                mixedSample = Math.Max(-1.0, Math.Min(1.0, mixedSample)); 
 
                 decayedSamples.Add((short)(mixedSample * short.MaxValue));
             }

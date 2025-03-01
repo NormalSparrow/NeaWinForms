@@ -19,8 +19,7 @@ namespace NEA_Audio_GUI
             for (int n = 0; n < samples; n++)
             {
 
-                double positionInPeriod = n % period;//calculate position
-                // double sample = (positionInPeriod < period / 2)
+                double positionInPeriod = n % period;
                 double sample;
                 if (positionInPeriod < period / 2) // square wave at a maxima
                 {
@@ -30,7 +29,7 @@ namespace NEA_Audio_GUI
                 {
                     sample = -amplitude; //square wave at a minima
                 }
-                data.Add((short)(sample * short.MaxValue));//scale to range & add to list
+                data.Add((short)(sample * short.MaxValue));
             }
 
 

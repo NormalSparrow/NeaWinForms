@@ -6,11 +6,11 @@ namespace NEA_Audio_GUI
 {
     internal class AudioPlayer
     {
-        private WaveOutEvent wo = new WaveOutEvent();
-        private ISampleProvider liveSample;
-        private float[] liveBuffer;
+        private readonly WaveOutEvent wo = new WaveOutEvent();
+        private ISampleProvider liveSample = null;
+        private float[] liveBuffer = null;
         private bool playing;
-        private LoopStream loopStream;
+        private LoopStream loopStream = null;
 
         public async Task PlayAudio(RawSourceWaveStream rs)
         {
@@ -38,7 +38,7 @@ namespace NEA_Audio_GUI
         {
             if (liveSample == null || liveBuffer == null)
             {
-                return null;
+                return new float[0];
             }
 
             int samplesRead = liveSample.Read(liveBuffer, 0, liveBuffer.Length);
@@ -49,7 +49,7 @@ namespace NEA_Audio_GUI
             }
             else
             {
-                return null;
+                return new float[0];
             }
         }
 
