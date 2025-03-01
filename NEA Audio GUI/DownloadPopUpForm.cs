@@ -39,8 +39,7 @@ namespace NEA_Audio_GUI
                 this.Close(); 
             }
             catch
-            {
-                
+            { 
                 MessageBox.Show("Please enter a valid number greater than 0.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -69,7 +68,7 @@ namespace NEA_Audio_GUI
                 }
                 else
                 {
-                    MessageBox.Show("Failed to repeat audio data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"audio data couldn't be repeated", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else

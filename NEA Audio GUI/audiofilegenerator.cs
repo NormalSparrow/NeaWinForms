@@ -9,13 +9,13 @@ namespace NEA_Audio_GUI
 {
     public class AudioFileGenerator
     {
-        private readonly karplus audioKarplus;
-        private readonly trianglewave audioTriangle;
-        private readonly squarewave audioSquare;
-        private readonly sawtoothwave audioSawtooth;
-        private readonly List<WaveType> inUseWaveTypes;
-        private readonly double frequency;
-        private readonly WaveFormat commonWaveFormat;
+        private karplus audioKarplus;
+        private trianglewave audioTriangle;
+        private squarewave audioSquare;
+        private sawtoothwave audioSawtooth;
+        private List<WaveType> inUseWaveTypes;
+        private double frequency;
+        private WaveFormat commonWaveFormat;
 
         public AudioFileGenerator(karplus audioKarplus, trianglewave audioTriangle, squarewave audioSquare, sawtoothwave audioSawtooth, List<WaveType> inUseWaveTypes, double frequency, WaveFormat commonWaveFormat)
         {
@@ -30,7 +30,7 @@ namespace NEA_Audio_GUI
 
         public void GenerateAndDownloadAudioData(double durationInSeconds)
         {
-            // Generate the audio data
+            
             byte[] audioData = GenerateAudioData(durationInSeconds);
 
             if (audioData != null)
@@ -45,12 +45,12 @@ namespace NEA_Audio_GUI
                 }
                 else
                 {
-                    MessageBox.Show("Failed to repeat audio data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("cannot repeat audio data", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("No audio data generated.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("no audio data generated", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private byte[] GenerateAudioData(double durationInSeconds)
@@ -93,7 +93,7 @@ namespace NEA_Audio_GUI
         {
             if (streams.Length == 0)
             {
-                throw new ArgumentException("No streams to mix, please pick 2 or more to use");
+                throw new ArgumentException("no streams to mix, please pick 2 or more to use");
             }
 
             var format = streams[0].WaveFormat;
@@ -113,7 +113,7 @@ namespace NEA_Audio_GUI
                     byte[] buffer = sampleBuffers[i];
                     short[] samples = new short[buffer.Length / 2];
 
-                    for (int j = 0; j < samples.Length; j++) // Convert byte array to short array
+                    for (int j = 0; j < samples.Length; j++) //byte to short array
                     {
                         samples[j] = BitConverter.ToInt16(buffer, j * 2);
                     }
@@ -133,7 +133,7 @@ namespace NEA_Audio_GUI
 
                 foreach (var buffer in sampleBuffers) // combining all streams
                 {
-                    short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to a short
+                    short sample = BitConverter.ToInt16(buffer, i); // each short = 2 bytes
                     mixedSample += sample;
                 }
 

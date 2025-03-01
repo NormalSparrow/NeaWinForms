@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Media;
 using System.Windows.Forms;
+
 namespace NEA_Audio_GUI
 {
     public partial class Form1 : Form
@@ -23,21 +24,14 @@ namespace NEA_Audio_GUI
         private System.Windows.Forms.Timer ScottPlottTimer;
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private StopWatchManager stopWatchManager;
-       // public byte[] previousArray;
-        private double[] XAxisValues(int count)
-        {
-            List<double> xValues = new List<double>();
-            for (int i = 0; i < count; i++)
-            {
-                xValues.Add(i);
-            }
-            return xValues.ToArray();
-        }
-      
+        // public byte[] previousArray;
+        private AudioFileGenerator audioFileGenerator;
+
+
+
         public Form1()
         {
             InitializeComponent();
-
 
             audioKarplus = new karplus();
             audioPlayer = new AudioPlayer();
@@ -47,8 +41,18 @@ namespace NEA_Audio_GUI
             Volume.Maximum = 1000;
             Frequency.Maximum = 1000;
 
-            waveTypeButtons = new Dictionary<WaveType, Button>() {
+            
+            audioFileGenerator = new AudioFileGenerator(
+                audioKarplus,
+                audioTriangle,
+                audioSquare,
+                audioSawtooth,
+                inUseWaveTypes,
+                frequency,
+                CommonWaveFormat
+            );
 
+            waveTypeButtons = new Dictionary<WaveType, Button>() {
                 { WaveType.Karplus, decayButton },
                 { WaveType.Triangle, triangleWaveButton }, //dictionary to make it easier to add more waveTypes 
                 { WaveType.Square, squareWaveButton},
@@ -65,8 +69,6 @@ namespace NEA_Audio_GUI
             ScottPlottTimer.Tick += UpdateScottPlott;
 
             stopWatchManager = new StopWatchManager(StopWatchDisplay, stopwatchTimer);
-          
-
         }
 
         private async void playButton_Click(object sender, EventArgs e)
@@ -111,21 +113,11 @@ namespace NEA_Audio_GUI
 
                 if (streams.Count > 0)
                 {
-                    var audioFileGenerator = new AudioFileGenerator(
-                        audioKarplus,
-                        audioTriangle,
-                        audioSquare,
-                        audioSawtooth,
-                        inUseWaveTypes,
-                        frequency,
-                        CommonWaveFormat
-                    );
-
-
-                    byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray()); 
+                    // Use the class-level audioFileGenerator to mix streams
+                    byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray());
                     MemoryStream mixedStream = new MemoryStream(mixedBytes);
                     mixedStream.Position = 0;
-                    audioStream = new RawSourceWaveStream(mixedStream, CommonWaveFormat); // result of mixstreams 
+                    audioStream = new RawSourceWaveStream(mixedStream, CommonWaveFormat);
                 }
 
                 if (audioStream != null)
@@ -136,7 +128,7 @@ namespace NEA_Audio_GUI
                 }
                 else
                 {
-                    MessageBox.Show("No audio stream generated, click one or more wavetypes to mix");
+                    MessageBox.Show("toggle one or more waves types to generate audio");
                     playButton.Text = "Play";
                 }
             }
@@ -148,10 +140,19 @@ namespace NEA_Audio_GUI
                 ScottPlottTimer.Stop();
             }
         }
-   
+
+        private double[] XAxisValues(int count)
+        {
+            List<double> xValues = new List<double>();
+            for (int i = 0; i < count; i++)
+            {
+                xValues.Add(i);
+            }
+            return xValues.ToArray();
+        }
+
         private void UpdateScottPlott(object sender, EventArgs e)
         {
-
             float[] liveSamples = audioPlayer.GetLiveSamples();
 
             if (liveSamples == null)
@@ -163,14 +164,12 @@ namespace NEA_Audio_GUI
             }
             if (liveSamples.Length > 0)
             {
-
                 latestSamples = liveSamples
                     .Select(s => (double)s)
                     .Take(1000)
                     .ToArray();
                 UpdatePlot();
             }
-
         }
 
         private void UpdatePlot()
@@ -184,24 +183,26 @@ namespace NEA_Audio_GUI
             }
         }
 
-
         private void decayButton_Click(object sender, EventArgs e)
         {
-
             toggleButton(WaveType.Karplus);
         }
+
         private void triangleWaveButton_Click(object sender, EventArgs e)
         {
             toggleButton(WaveType.Triangle);
         }
+
         private void squareWaveButton_Click(object sender, EventArgs e)
         {
             toggleButton(WaveType.Square);
         }
+
         private void sawtoothWaveButton_Click(object sender, EventArgs e)
         {
             toggleButton(WaveType.Sawtooth);
         }
+
         private void toggleButton(WaveType waveType)
         {
             if (inUseWaveTypes.Contains(waveType))
@@ -217,10 +218,6 @@ namespace NEA_Audio_GUI
 
         private void ButtonAppearance()
         {
-            //    decayButton.BackColor = inUseWaveTypes.Contains(WaveType.Karplus) ? Color.Green : SystemColors.Control;
-            //  triangleWaveButton.BackColor = inUseWaveTypes.Contains(WaveType.Triangle) ? Color.Green : SystemColors.Control; make dictionary
-
-
             foreach (var keyValuePair in waveTypeButtons)
             {
                 WaveType waveType = keyValuePair.Key;
@@ -234,18 +231,17 @@ namespace NEA_Audio_GUI
                 {
                     button.BackColor = Color.White;
                 }
-
             }
         }
+
         private void Volume_Scroll(object sender, EventArgs e)
         {
             float volume = 0;
             if (Volume.Value / 1000f > 0)
             {
-                volume = Volume.Value / 1000f;  
+                volume = Volume.Value / 1000f;
                 audioPlayer.SetVolume(volume);
             }
-
         }
 
         private void frequency_Scroll(object sender, EventArgs e)
@@ -253,44 +249,25 @@ namespace NEA_Audio_GUI
             frequency = 1000 + (Frequency.Value * 100);
         }
 
-
-  
-
-
         private void formsPlot1_Load(object sender, EventArgs e)
         {
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
         }
 
         private void StopWatchDisplay_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
-        
             using (DownloadPopupForm downloadPopup = new DownloadPopupForm())
             {
                 if (downloadPopup.ShowDialog() == DialogResult.OK)
                 {
                     double durationInSeconds = downloadPopup.Duration;
-
-                   
-                    var audioFileGenerator = new AudioFileGenerator(
-                        audioKarplus,
-                        audioTriangle,
-                        audioSquare,
-                        audioSawtooth,
-                        inUseWaveTypes,
-                        frequency,
-                        CommonWaveFormat
-                    );
 
                     
                     audioFileGenerator.GenerateAndDownloadAudioData(durationInSeconds);
@@ -298,5 +275,4 @@ namespace NEA_Audio_GUI
             }
         }
     }
-
 }
