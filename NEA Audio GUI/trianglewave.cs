@@ -7,7 +7,7 @@ using NAudio.Wave;
 
 namespace NEA_Audio_GUI
 {
-    internal class trianglewave
+    public class trianglewave
     {
         public RawSourceWaveStream Triangle( double frequency = 440.0, double amplitude = 1.0, double seconds = 5.0)
         {
@@ -25,7 +25,8 @@ namespace NEA_Audio_GUI
 
             MemoryStream ms = new MemoryStream(data.SelectMany(BitConverter.GetBytes).ToArray());
             ms.Position = 0;
-            return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);
+            return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);  //converts to same format and adds to stream
         }
     }
 }
+    

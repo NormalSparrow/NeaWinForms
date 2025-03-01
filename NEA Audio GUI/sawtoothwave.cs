@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NEA_Audio_GUI
 {
-    internal class sawtoothwave
+    public class sawtoothwave
     {
         public RawSourceWaveStream Sawtooth(double frequency = 440.0, double amplitude = 1.0, double seconds = 5.0)
         {
@@ -27,4 +27,5 @@ namespace NEA_Audio_GUI
             return new RawSourceWaveStream(ms, Form1.CommonWaveFormat);
         }
     }
-}
+    }
+

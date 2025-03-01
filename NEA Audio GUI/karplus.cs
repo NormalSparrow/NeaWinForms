@@ -2,7 +2,7 @@
 
 namespace NEA_Audio_GUI
 {
-    internal class karplus
+    public class karplus
     {
         public short[] ApplyDecay(short[] inputSamples)
         {

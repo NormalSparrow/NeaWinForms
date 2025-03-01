@@ -23,7 +23,7 @@ namespace NEA_Audio_GUI
         private System.Windows.Forms.Timer ScottPlottTimer;
         public static WaveFormat CommonWaveFormat = new WaveFormat(44100, 16, 1);
         private StopWatchManager stopWatchManager;
-
+       // public byte[] previousArray;
         private double[] XAxisValues(int count)
         {
             List<double> xValues = new List<double>();
@@ -33,6 +33,7 @@ namespace NEA_Audio_GUI
             }
             return xValues.ToArray();
         }
+      
         public Form1()
         {
             InitializeComponent();
@@ -108,14 +109,29 @@ namespace NEA_Audio_GUI
 
                 if (streams.Count > 0)
                 {
-                    audioStream = MixStreams(streams.ToArray());
+                    // Use AudioFileGenerator to mix streams
+                    var audioFileGenerator = new AudioFileGenerator(
+                        audioKarplus,
+                        audioTriangle,
+                        audioSquare,
+                        audioSawtooth,
+                        inUseWaveTypes,
+                        frequency,
+                        CommonWaveFormat
+                    );
+
+                    // Mix streams and convert the result to a RawSourceWaveStream
+                    byte[] mixedBytes = audioFileGenerator.MixStreams(streams.ToArray());
+                    MemoryStream mixedStream = new MemoryStream(mixedBytes);
+                    mixedStream.Position = 0;
+                    audioStream = new RawSourceWaveStream(mixedStream, CommonWaveFormat);
                 }
 
                 if (audioStream != null)
                 {
                     stopWatchManager.Start();
                     ScottPlottTimer.Start();
-                    await audioPlayer.PlayAudio(audioStream); // until bool playing = false, this will play audio
+                    await audioPlayer.PlayAudio(audioStream);
                 }
                 else
                 {
@@ -131,90 +147,7 @@ namespace NEA_Audio_GUI
                 ScottPlottTimer.Stop();
             }
         }
-
-        private RawSourceWaveStream MixStreams(RawSourceWaveStream[] streams)
-        {
-            if (streams.Length == 0)
-            {
-                throw new ArgumentException("something has gone incredibly wrong, mixstreams is being called with no streams");
-            }
-            var format = streams[0].WaveFormat;
-            foreach (var stream in streams)
-            {
-                if (stream.WaveFormat != format)
-                {
-                    Console.WriteLine("error occured: waveStreams are not formatted the same");
-                }
-            }
-            List<byte[]> sampleBuffers = new List<byte[]>(); //all bytes of samples are in a list 
-            foreach (var stream in streams)
-            {
-                byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length); //read samples to buffer
-                sampleBuffers.Add(buffer);
-            }
-
-
-            if (inUseWaveTypes.Contains(WaveType.Karplus)) //application of decay to all waves
-            {
-                for (int i = 0; i < sampleBuffers.Count; i++)
-                {
-                    byte[] buffer = sampleBuffers[i];
-                    short[] samples = new short[buffer.Length / 2];
-
-
-                    for (int j = 0; j < samples.Length; j++)  // byte to short array
-                    {
-                        samples[j] = BitConverter.ToInt16(buffer, j * 2);
-                    }
-
-
-                    samples = audioKarplus.ApplyDecay(samples);
-
-
-                    byte[] decayedBuffer = new byte[samples.Length * 2];// Convert short array back to byte array
-                    Buffer.BlockCopy(samples, 0, decayedBuffer, 0, decayedBuffer.Length);
-                    sampleBuffers[i] = decayedBuffer;
-                }
-            }
-
-            List<short> mixedSamples = new List<short>();
-            for (int i = 0; i < sampleBuffers[0].Length; i += 2) // Process 2 bytes at a time (16-bit samples)  
-            {
-                int mixedSample = 0;
-
-                foreach (var buffer in sampleBuffers)      // add the samples from all streams
-                {
-                    short sample = BitConverter.ToInt16(buffer, i); // Convert 2 bytes to a short 
-                    mixedSample += sample;
-                }
-
-                mixedSample = mixedSample / streams.Length;
-                mixedSample = Math.Max(short.MinValue, Math.Min(short.MaxValue, mixedSample));// makes sure sample is in range
-
-                mixedSamples.Add((short)mixedSample);
-            }
-
-            latestSamples = mixedSamples
-                .Select(s => (double)s)
-                .Take(1000) //resolution for display is 1000 samples max
-                .ToArray();// to plot points on the scottplot, float to double
-
-            if (latestSamples.Length > 0)
-            {
-                Oscillator.Plot.Clear();
-                Oscillator.Plot.Add.Scatter(XAxisValues(latestSamples.Length), latestSamples);
-                Oscillator.Plot.Axes.AutoScale();
-                Oscillator.Refresh();
-            }
-
-            byte[] mixedBytes = mixedSamples.SelectMany(BitConverter.GetBytes).ToArray();// Convert the mixed samples back into a byte 
-            MemoryStream mixedStream = new MemoryStream(mixedBytes);
-            mixedStream.Position = 0;
-
-            return new RawSourceWaveStream(mixedStream, format); //final array
-        }
-
+   
         private void UpdateScottPlott(object sender, EventArgs e)
         {
 
@@ -308,7 +241,7 @@ namespace NEA_Audio_GUI
             float volume = 0;
             if (Volume.Value / 1000f > 0)
             {
-                volume = Volume.Value / 1000f;
+                volume = Volume.Value / 1000f;  
                 audioPlayer.SetVolume(volume);
             }
 
@@ -320,14 +253,7 @@ namespace NEA_Audio_GUI
         }
 
 
-        private enum WaveType
-        {
-
-            Karplus,
-            Triangle,
-            Square,
-            Sawtooth
-        }
+  
 
 
         private void formsPlot1_Load(object sender, EventArgs e)
@@ -347,9 +273,28 @@ namespace NEA_Audio_GUI
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
+            // Show the DownloadPopupForm to get the duration
+            using (DownloadPopupForm downloadPopup = new DownloadPopupForm())
+            {
+                if (downloadPopup.ShowDialog() == DialogResult.OK)
+                {
+                    double durationInSeconds = downloadPopup.Duration;
 
-            DownloadPopupForm downloadPopup = new DownloadPopupForm();
-            downloadPopup.ShowDialog();
+                    // Create an instance of AudioFileGenerator
+                    var audioFileGenerator = new AudioFileGenerator(
+                        audioKarplus,
+                        audioTriangle,
+                        audioSquare,
+                        audioSawtooth,
+                        inUseWaveTypes,
+                        frequency,
+                        CommonWaveFormat
+                    );
+
+                    // Generate and download the audio data
+                    audioFileGenerator.GenerateAndDownloadAudioData(durationInSeconds);
+                }
+            }
         }
     }
 
