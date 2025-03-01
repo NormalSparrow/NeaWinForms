@@ -146,7 +146,7 @@ namespace NEA_Audio_GUI
             
             return mixedSamples.SelectMany(BitConverter.GetBytes).ToArray();
         }
-        private byte[] RepeatAudioData(byte[] audioData, double durationInSeconds)
+        private byte[] RepeatAudioData(byte[] audioData, double durationInSeconds) 
         {
             if (audioData == null || audioData.Length == 0)
             {
