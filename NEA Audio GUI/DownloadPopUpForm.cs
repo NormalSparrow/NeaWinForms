@@ -45,10 +45,7 @@ namespace NEA_Audio_GUI
         }
 
        
-        private void AmountOfSecondsBox_TextChanged(object sender, EventArgs e)
-        {
-            
-        }
+ 
 
     
         public void GenerateAndDownloadAudioData(double durationInSeconds)

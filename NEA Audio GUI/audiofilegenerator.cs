@@ -9,13 +9,13 @@ namespace NEA_Audio_GUI
 {
     public class AudioFileGenerator
     {
-        private karplus audioKarplus;
-        private trianglewave audioTriangle;
-        private squarewave audioSquare;
-        private sawtoothwave audioSawtooth;
-        private List<WaveType> inUseWaveTypes;
-        private double frequency;
-        private WaveFormat commonWaveFormat;
+        private readonly karplus audioKarplus;
+        private readonly trianglewave audioTriangle;
+        private readonly squarewave audioSquare;
+        private readonly sawtoothwave audioSawtooth;
+        private readonly List<WaveType> inUseWaveTypes;
+        private readonly double frequency;
+        private readonly WaveFormat commonWaveFormat;
 
         public AudioFileGenerator(karplus audioKarplus, trianglewave audioTriangle, squarewave audioSquare, sawtoothwave audioSawtooth, List<WaveType> inUseWaveTypes, double frequency, WaveFormat commonWaveFormat)
         {
@@ -96,13 +96,13 @@ namespace NEA_Audio_GUI
                 throw new ArgumentException("no streams to mix, please pick 2 or more to use");
             }
 
-            var format = streams[0].WaveFormat;
+           
             List<byte[]> sampleBuffers = new List<byte[]>();
 
             foreach (var stream in streams)
             {
                 byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length); // Read samples to buffer
+                _ = stream.Read(buffer, 0, buffer.Length); // Read samples to buffer
                 sampleBuffers.Add(buffer);
             }
 
@@ -170,7 +170,7 @@ namespace NEA_Audio_GUI
             return repeatedData;
         }
 
-        private void DownloadAudio(byte[] audioData)
+        private static void DownloadAudio(byte[] audioData)
         {
             if (audioData == null || audioData.Length == 0)
             {

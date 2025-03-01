@@ -38,7 +38,7 @@
             AmountOfSecondsBox.Name = "AmountOfSecondsBox";
             AmountOfSecondsBox.Size = new Size(100, 23);
             AmountOfSecondsBox.TabIndex = 1;
-            AmountOfSecondsBox.TextChanged += AmountOfSecondsBox_TextChanged;
+            
             // 
             // FinishButton
             // 
