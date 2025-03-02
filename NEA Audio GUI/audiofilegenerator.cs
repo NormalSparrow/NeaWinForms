@@ -45,12 +45,12 @@ namespace NEA_Audio_GUI
                 }
                 else
                 {
-                    MessageBox.Show("cannot repeat audio data", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("cannot repeat audio data", "repeat audio data error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("no audio data generated", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("no audio data generated", "audio data error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private byte[] GenerateAudioData(double durationInSeconds)
@@ -174,14 +174,14 @@ namespace NEA_Audio_GUI
         {
             if (audioData == null || audioData.Length == 0)
             {
-                MessageBox.Show("No audio data to save.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("no audio data to save.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
           
             using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
-                folderDialog.Description = "Select a folder to save the audio file";
+                folderDialog.Description ="select folder";
                 folderDialog.ShowNewFolderButton = true;
 
                 if (folderDialog.ShowDialog() == DialogResult.OK)
@@ -193,11 +193,11 @@ namespace NEA_Audio_GUI
                     try
                     {
                         File.WriteAllBytes(filePath, audioData);
-                        MessageBox.Show("audio saved", "Download Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("audio saved", "download finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"error: {ex.Message}", "download error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
