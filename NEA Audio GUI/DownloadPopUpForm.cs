@@ -21,7 +21,7 @@ namespace NEA_Audio_GUI
             
             string durationText = AmountOfSecondsBox.Text;
 
-            try
+            try 
             {
               
                 double duration = Convert.ToDouble(durationText);
@@ -29,7 +29,7 @@ namespace NEA_Audio_GUI
                
                 if (duration <= 0)
                 {
-                    MessageBox.Show("Please enter a number greater than 0.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Error(null ,"Enter a number greater than 0");
                     return; 
                 }
 
@@ -38,9 +38,9 @@ namespace NEA_Audio_GUI
                 this.DialogResult = DialogResult.OK; 
                 this.Close(); 
             }
-            catch
-            { 
-                MessageBox.Show("Please enter a valid number greater than 0.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            catch(Exception ExceptionMessage)
+            {
+                Error(ExceptionMessage, "enter a valid input");
             }
         }
 
@@ -119,7 +119,8 @@ namespace NEA_Audio_GUI
         {
             if (audioData == null || audioData.Length == 0)
             {
-                MessageBox.Show("there is either no data, or the data length is = 0", " Missing data", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                Error(null, "There is either no data, or the data length is = 0");
                 return;
             }
 
@@ -140,12 +141,23 @@ namespace NEA_Audio_GUI
                         File.WriteAllBytes(filePath, audioData);
                         MessageBox.Show("audio downloaded", "download finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
-                    catch (Exception ex)
+                    catch (Exception exceptionMessage)
                     {
-                        MessageBox.Show($"Error: {ex.Message}", "Unexpected download error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Error(exceptionMessage , "Download error has occured");
                     }
                 }
             }
+        }
+        private static void Error(Exception exceptionMessage , string message)
+        {
+          
+            if (exceptionMessage != null) 
+            {
+
+                message += exceptionMessage.Message;
+            }
+
+            MessageBox.Show($"Error: {message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
