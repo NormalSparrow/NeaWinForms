@@ -65,12 +65,12 @@ namespace NEA_Audio_GUI
                 }
                 else
                 {
-                    MessageBox.Show($"audio data couldn't be repeated", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"audio data couldn't be repeated", "Audio repitition error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("No audio data generated.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No audio data generated.", "Audio Generation error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -92,7 +92,7 @@ namespace NEA_Audio_GUI
         {
             if (audioData == null || audioData.Length == 0)
             {
-                return null;
+                return new byte[0];
             }
 
             int sampleRate = 44100; 
@@ -119,7 +119,7 @@ namespace NEA_Audio_GUI
         {
             if (audioData == null || audioData.Length == 0)
             {
-                MessageBox.Show("there is either no data, or the data length is = 0", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("there is either no data, or the data length is = 0", " Missing data", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace NEA_Audio_GUI
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Error: {ex.Message}", "Unexpected download error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

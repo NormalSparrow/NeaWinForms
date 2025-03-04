@@ -166,9 +166,9 @@ namespace NEA_Audio_GUI
             ScottPlottTimer.Start();
         }
 
-        private void ShowNoWaveTypesSelectedMessage()
+        private static void ShowNoWaveTypesSelectedMessage()
         {
-            MessageBox.Show("Toggle one or more wave types to generate audio.");
+            MessageBox.Show("toggle one or more wave types to generate audio");
         }
 
         private static double[] XAxisValues(int count)
