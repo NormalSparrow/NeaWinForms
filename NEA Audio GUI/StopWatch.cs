@@ -6,9 +6,9 @@ namespace NEA_Audio_GUI
 {
     public class StopWatchManager
     {
-        private Stopwatch stopwatch;
-        private  System.Windows.Forms.Timer timer;
-        private  TextBox display;
+        private readonly Stopwatch stopwatch;
+        private readonly System.Windows.Forms.Timer timer;
+        private readonly  TextBox display;
 
         public StopWatchManager(TextBox stopWatchDisplay, System.Windows.Forms.Timer stopWatchTimer)
         {

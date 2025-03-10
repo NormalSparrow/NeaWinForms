@@ -56,7 +56,7 @@ namespace NEA_Audio_GUI
             };
 
             Oscillator.Plot.Title("WaveForm visualizer");
-            Oscillator.Plot.XLabel("Time");
+            Oscillator.Plot.XLabel("Frequency");
             Oscillator.Plot.YLabel("Amplitude");
             Oscillator.Refresh();
 
@@ -271,11 +271,11 @@ namespace NEA_Audio_GUI
             {
                 volume = Volume.Value / 1000f;
                 audioPlayer.SetVolume(volume);
+                }
             }
-        }
 
-        private void frequency_Scroll(object sender, EventArgs e)
-        {
+            private void frequency_Scroll(object sender, EventArgs e)
+            {
             frequency = 1000 + (Frequency.Value * 100);
         }
 
